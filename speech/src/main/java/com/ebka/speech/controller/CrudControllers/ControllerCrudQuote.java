@@ -16,7 +16,7 @@ public class ControllerCrudQuote {
         this.quoteService = quoteService;
     }
     @GetMapping("/{id}")
-    public ResponseEntity getOne(@RequestBody String id){
+    public ResponseEntity getOne(@PathVariable String id){
         Quote quote = quoteService.getQuote(Integer.parseInt(id));
         if (quote != null){
             return ResponseEntity.ok(quote);
@@ -45,8 +45,8 @@ public class ControllerCrudQuote {
         }
     }
 
-    @DeleteMapping("/delete/{id]")
-    public ResponseEntity delete(@RequestBody String id){
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity delete(@PathVariable String id){
         quoteService.deleteQuote(Integer.parseInt(id));
         return ResponseEntity.ok().build();
     }

@@ -18,7 +18,7 @@ public class ControllerCrudPicture {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getOne(@RequestBody String id){
+    public ResponseEntity getOne(@PathVariable String id){
         Picture picture = pictureService.getPicture(Integer.parseInt(id));
         if (picture != null){
             return ResponseEntity.ok(picture);
@@ -47,8 +47,8 @@ public class ControllerCrudPicture {
         }
     }
 
-    @DeleteMapping("/delete/{id]")
-    public ResponseEntity delete(@RequestBody String id){
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity delete(@PathVariable String id){
         pictureService.deletePicture(Integer.parseInt(id));
         return ResponseEntity.ok().build();
     }

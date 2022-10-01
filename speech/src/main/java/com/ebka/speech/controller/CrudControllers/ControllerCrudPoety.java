@@ -17,8 +17,9 @@ public class ControllerCrudPoety {
         this.poetyService = poetyService;
     }
     @GetMapping("/{id}")
-    public ResponseEntity getOne(@RequestBody String id){
-        Poety poety = poetyService.getPoety(Integer.parseInt(id));
+    public ResponseEntity getOne(@PathVariable Integer id){
+        System.out.println(id);
+        Poety poety = poetyService.getPoety(id);
         if (poety != null){
             return ResponseEntity.ok(poety);
         }else{
@@ -46,8 +47,8 @@ public class ControllerCrudPoety {
         }
     }
 
-    @DeleteMapping("/delete/{id]")
-    public ResponseEntity delete(@RequestBody String id){
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity delete(@PathVariable String id){
         poetyService.deletePoety(Integer.parseInt(id));
         return ResponseEntity.ok().build();
     }

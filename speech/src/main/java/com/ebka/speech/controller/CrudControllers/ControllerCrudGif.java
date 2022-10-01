@@ -17,7 +17,7 @@ public class ControllerCrudGif {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getOne(@RequestBody String id){
+    public ResponseEntity getOne(@PathVariable String id){
         Gif gif = gifService.getGif(Integer.parseInt(id));
         if (gif != null){
             return ResponseEntity.ok(gif);
@@ -46,8 +46,8 @@ public class ControllerCrudGif {
         }
     }
 
-    @DeleteMapping("/delete/{id]")
-    public ResponseEntity delete(@RequestBody String id){
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity delete(@PathVariable String id){
         gifService.deleteGif(Integer.parseInt(id));
         return ResponseEntity.ok().build();
     }

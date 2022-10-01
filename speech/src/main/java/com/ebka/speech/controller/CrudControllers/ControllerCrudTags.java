@@ -18,7 +18,7 @@ public class ControllerCrudTags {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getOne(@RequestBody String id){
+    public ResponseEntity getOne(@PathVariable String id){
         Tags tags = tagsService.getTags(Integer.parseInt(id));
         if (tags != null){
             return ResponseEntity.ok(tags);
@@ -47,8 +47,8 @@ public class ControllerCrudTags {
         }
     }
 
-    @DeleteMapping("/delete/{id]")
-    public ResponseEntity delete(@RequestBody String id){
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity delete(@PathVariable String id){
         tagsService.deleteTags(Integer.parseInt(id));
         return ResponseEntity.ok().build();
     }

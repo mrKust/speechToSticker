@@ -19,7 +19,7 @@ public class PoetyServiceImpl implements PoetyService {
 
     @Override
     public List<Poety> getAllPoety() {
-        return getAllPoety();
+        return poetyDAO.findAll();
     }
 
     @Override

@@ -17,7 +17,7 @@ public class ControllerCrudVideo {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getOne(@RequestBody String id){
+    public ResponseEntity getOne(@PathVariable String id){
         Video video = videoService.getVideo(Integer.parseInt(id));
         if (video != null){
             return ResponseEntity.ok(video);
@@ -46,8 +46,8 @@ public class ControllerCrudVideo {
         }
     }
 
-    @DeleteMapping("/delete/{id]")
-    public ResponseEntity delete(@RequestBody String id){
+    @DeleteMapping( "/delete/{id}")
+    public ResponseEntity delete(@PathVariable String id){
         videoService.deleteVideo(Integer.parseInt(id));
         return ResponseEntity.ok().build();
     }

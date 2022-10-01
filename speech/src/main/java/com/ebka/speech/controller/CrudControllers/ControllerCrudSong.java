@@ -17,7 +17,7 @@ public class ControllerCrudSong {
         this.songService = songService;
     }
     @GetMapping("/{id}")
-    public ResponseEntity getOne(@RequestBody String id){
+    public ResponseEntity getOne(@PathVariable String id){
         Song song = songService.getSong(Integer.parseInt(id));
         if (song != null){
             return ResponseEntity.ok(song);
@@ -46,8 +46,8 @@ public class ControllerCrudSong {
         }
     }
 
-    @DeleteMapping("/delete/{id]")
-    public ResponseEntity delete(@RequestBody String id){
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity delete(@PathVariable String id){
         songService.deleteSong(Integer.parseInt(id));
         return ResponseEntity.ok().build();
     }
