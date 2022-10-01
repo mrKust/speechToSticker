@@ -7,7 +7,7 @@ import java.util.List;
 public interface PictureService {
 
     public List<Picture> getAllPictures();
-    public void savePicture(Picture picture);
+    public boolean savePicture(Picture picture);
     public Picture getPicture(int id);
     public void deletePicture(int id);
 }

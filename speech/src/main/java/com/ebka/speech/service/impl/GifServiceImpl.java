@@ -23,8 +23,13 @@ public class GifServiceImpl implements GifService {
     }
 
     @Override
-    public void saveGif(Gif gif) {
-        gifDAO.save(gif);
+    public boolean saveGif(Gif gif) {
+        Gif gifAnswer = gifDAO.save(gif);
+        if (gifAnswer != null){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     @Override

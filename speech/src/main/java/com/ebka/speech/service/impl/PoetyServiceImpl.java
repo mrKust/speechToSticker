@@ -23,8 +23,13 @@ public class PoetyServiceImpl implements PoetyService {
     }
 
     @Override
-    public void savePoety(Poety poety) {
-        poetyDAO.save(poety);
+    public boolean savePoety(Poety poety) {
+        Poety save = poetyDAO.save(poety);
+        if (save != null){
+            return true;
+        }else {
+            return false;
+        }
     }
 
     @Override

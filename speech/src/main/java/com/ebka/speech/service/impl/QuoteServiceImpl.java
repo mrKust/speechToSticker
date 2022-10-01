@@ -23,8 +23,13 @@ public class QuoteServiceImpl implements QuoteService {
     }
 
     @Override
-    public void saveQuote(Quote quote) {
-        quoteDAO.save(quote);
+    public boolean saveQuote(Quote quote) {
+        Quote save = quoteDAO.save(quote);
+        if (save != null){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     @Override

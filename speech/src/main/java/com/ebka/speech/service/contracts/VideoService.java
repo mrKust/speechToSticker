@@ -7,7 +7,7 @@ import java.util.List;
 public interface VideoService {
 
     public List<Video> getAllVideos();
-    public void saveVideo(Video video);
+    public boolean saveVideo(Video video);
     public Video getVideo(int id);
     public void deleteVideo(int id);
 }

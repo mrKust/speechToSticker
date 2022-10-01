@@ -8,7 +8,7 @@ import java.util.List;
 public interface TagsService {
 
     public List<Tags> getAllTags();
-    public void saveTags(Tags tags);
+    public boolean saveTags(Tags tags);
     public Tags getTags(int id);
     public void deleteTags(int id);
 }

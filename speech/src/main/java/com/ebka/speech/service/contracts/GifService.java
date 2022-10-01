@@ -8,7 +8,7 @@ import java.util.List;
 public interface GifService {
 
     public List<Gif> getAllGifs();
-    public void saveGif(Gif gif);
+    public boolean saveGif(Gif gif);
     public Gif getGif(int id);
     public void deleteGif(int id);
 }

@@ -23,8 +23,13 @@ public class TagsServiceImpl implements TagsService {
     }
 
     @Override
-    public void saveTags(Tags tags) {
-        tagsDAO.save(tags);
+    public boolean saveTags(Tags tags) {
+        Tags save = tagsDAO.save(tags);
+        if (save != null){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     @Override

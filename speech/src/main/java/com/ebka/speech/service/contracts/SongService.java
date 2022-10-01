@@ -8,7 +8,7 @@ import java.util.List;
 public interface SongService {
 
     public List<Song> getAllSongs();
-    public void saveSong(Song song);
+    public boolean saveSong(Song song);
     public Song getSong(int id);
     public void deleteSong(int id);
 }

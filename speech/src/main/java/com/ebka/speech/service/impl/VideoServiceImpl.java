@@ -23,8 +23,13 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public void saveVideo(Video video) {
-        videoDAO.save(video);
+    public boolean saveVideo(Video video) {
+        Video save = videoDAO.save(video);
+        if (save != null){
+            return true;
+        } else{
+            return false;
+        }
     }
 
     @Override

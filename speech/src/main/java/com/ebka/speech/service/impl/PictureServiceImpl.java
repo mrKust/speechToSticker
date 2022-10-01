@@ -23,8 +23,13 @@ public class PictureServiceImpl implements PictureService {
     }
 
     @Override
-    public void savePicture(Picture picture) {
-        pictureDAO.save(picture);
+    public boolean savePicture(Picture picture) {
+        Picture save = pictureDAO.save(picture);
+        if (save != null){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     @Override

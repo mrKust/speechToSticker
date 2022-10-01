@@ -23,8 +23,13 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public void saveSong(Song song) {
-        songDAO.save(song);
+    public boolean saveSong(Song song) {
+        Song save = songDAO.save(song);
+        if (save != null){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     @Override
