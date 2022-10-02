@@ -35,7 +35,7 @@ public class MainServiceImpl implements MainService {
     @Override
     public Map getEmotion(PairDTO inputData) {
         Map<String, String> result = new HashMap<>();
-        int[] choosenTypes = Stream.of(inputData.getParamTwo().split(", "))
+        int[] choosenTypes = Stream.of(inputData.getParamTwo().split(","))
                 .mapToInt(Integer::parseInt)
                 .toArray();
         Random random = new Random();
@@ -44,7 +44,7 @@ public class MainServiceImpl implements MainService {
         int resultId;
         switch (mediaPos){
             case 0:
-                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdGif().split(", "))
+                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdGif().split(","))
                         .mapToInt(Integer::parseInt)
                         .toArray();
                 resultId = random.nextInt(idElems.length);
@@ -54,7 +54,7 @@ public class MainServiceImpl implements MainService {
                 }
                 break;
             case 1:
-                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdPic().split(", "))
+                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdPic().split(","))
                         .mapToInt(Integer::parseInt)
                         .toArray();
                 resultId = random.nextInt(idElems.length);
@@ -64,7 +64,7 @@ public class MainServiceImpl implements MainService {
                 }
                 break;
             case 2:
-                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdPoety().split(", "))
+                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdPoety().split(","))
                         .mapToInt(Integer::parseInt)
                         .toArray();
                 resultId = random.nextInt(idElems.length);
@@ -74,7 +74,7 @@ public class MainServiceImpl implements MainService {
                 }
                 break;
             case 3:
-                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdQuote().split(", "))
+                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdQuote().split(","))
                         .mapToInt(Integer::parseInt)
                         .toArray();
                 resultId = random.nextInt(idElems.length);
@@ -84,7 +84,7 @@ public class MainServiceImpl implements MainService {
                 }
                 break;
             case 4:
-                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdSong().split(", "))
+                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdSong().split(","))
                         .mapToInt(Integer::parseInt)
                         .toArray();
                 resultId = random.nextInt(idElems.length);
@@ -94,7 +94,7 @@ public class MainServiceImpl implements MainService {
                 }
                 break;
             case 5:
-                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdVideo().split(", "))
+                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdVideo().split(","))
                         .mapToInt(Integer::parseInt)
                         .toArray();
                 resultId = random.nextInt(idElems.length);
