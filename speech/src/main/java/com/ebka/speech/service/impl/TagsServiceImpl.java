@@ -33,7 +33,7 @@ public class TagsServiceImpl implements TagsService {
     }
 
     @Override
-    public Tags getTags(int id) {
+    public Tags getTags(String id) {
         Optional<Tags> result = tagsDAO.findById(id);
         if (result.isPresent())
             return result.get();
@@ -41,7 +41,7 @@ public class TagsServiceImpl implements TagsService {
     }
 
     @Override
-    public void deleteTags(int id) {
+    public void deleteTags(String id) {
         tagsDAO.deleteById(id);
     }
 }

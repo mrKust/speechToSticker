@@ -1,7 +1,9 @@
 package com.ebka.speech.service.impl;
 
 import com.ebka.speech.dao.QuoteRepository;
+import com.ebka.speech.dao.TagsRepository;
 import com.ebka.speech.entity.Quote;
+import com.ebka.speech.entity.Tags;
 import com.ebka.speech.service.contracts.QuoteService;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +14,11 @@ import java.util.Optional;
 public class QuoteServiceImpl implements QuoteService {
 
     private QuoteRepository quoteDAO;
+    private TagsRepository tagsDAO;
 
-    public QuoteServiceImpl(QuoteRepository quoteDAO) {
+    public QuoteServiceImpl(QuoteRepository quoteDAO, TagsRepository tagsDAO) {
         this.quoteDAO = quoteDAO;
+        this.tagsDAO = tagsDAO;
     }
 
     @Override
@@ -24,6 +28,14 @@ public class QuoteServiceImpl implements QuoteService {
 
     @Override
     public boolean saveQuote(Quote quote) {
+        Optional<Tags> byId = tagsDAO.findById(quote.getTagName());
+        if (byId.isPresent()){
+            Tags tags = byId.get();
+            String idQuote = tags.getIdQuote();
+            idQuote += ","+quote.getId();
+            tags.setIdQuote(idQuote);
+            tagsDAO.save(tags);
+        }
         Quote save = quoteDAO.save(quote);
         if (save != null){
             return true;

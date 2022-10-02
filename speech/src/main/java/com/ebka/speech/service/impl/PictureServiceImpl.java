@@ -1,7 +1,9 @@
 package com.ebka.speech.service.impl;
 
 import com.ebka.speech.dao.PictureRepository;
+import com.ebka.speech.dao.TagsRepository;
 import com.ebka.speech.entity.Picture;
+import com.ebka.speech.entity.Tags;
 import com.ebka.speech.service.contracts.PictureService;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +14,11 @@ import java.util.Optional;
 public class PictureServiceImpl implements PictureService {
 
     private PictureRepository pictureDAO;
+    private TagsRepository tagsDAO;
 
-    public PictureServiceImpl(PictureRepository pictureDAO) {
+    public PictureServiceImpl(PictureRepository pictureDAO, TagsRepository tagsDAO) {
         this.pictureDAO = pictureDAO;
+        this.tagsDAO = tagsDAO;
     }
 
     @Override
@@ -24,6 +28,14 @@ public class PictureServiceImpl implements PictureService {
 
     @Override
     public boolean savePicture(Picture picture) {
+        Optional<Tags> byId = tagsDAO.findById(picture.getTagName());
+        if (byId.isPresent()){
+            Tags tags = byId.get();
+            String idPic = tags.getIdPic();
+            idPic += ","+picture.getId();
+            tags.setIdPic(idPic);
+            tagsDAO.save(tags);
+        }
         Picture save = pictureDAO.save(picture);
         if (save != null){
             return true;

@@ -1,7 +1,9 @@
 package com.ebka.speech.service.impl;
 
 import com.ebka.speech.dao.GifRepository;
+import com.ebka.speech.dao.TagsRepository;
 import com.ebka.speech.entity.Gif;
+import com.ebka.speech.entity.Tags;
 import com.ebka.speech.service.contracts.GifService;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +14,11 @@ import java.util.Optional;
 public class GifServiceImpl implements GifService {
 
     private GifRepository gifDAO;
+    private TagsRepository tagsDAO;
 
-    public GifServiceImpl(GifRepository gifDAO) {
+    public GifServiceImpl(GifRepository gifDAO, TagsRepository tagsDAO) {
         this.gifDAO = gifDAO;
+        this.tagsDAO = tagsDAO;
     }
 
     @Override
@@ -24,6 +28,14 @@ public class GifServiceImpl implements GifService {
 
     @Override
     public boolean saveGif(Gif gif) {
+        final Optional<Tags> byId = tagsDAO.findById(gif.getTagName());
+        if (byId.isPresent()){
+            Tags tags = byId.get();
+            String idGif = tags.getIdGif();
+            idGif += ","+gif.getId();
+            tags.setIdGif(idGif);
+            tagsDAO.save(tags);
+        }
         Gif gifAnswer = gifDAO.save(gif);
         if (gifAnswer != null){
             return true;

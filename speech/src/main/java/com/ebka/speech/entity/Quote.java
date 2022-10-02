@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "Quote")
@@ -23,21 +22,13 @@ public class Quote {
     @Column(name = "author")
     private String author;
 
-    @Column(name = "quote_score")
-    private int quoteScore;
+    @Column(name = "tag_name")
+    private String tagName;
 
-    @ManyToMany
-    @JoinTable(
-            name = "quote_tags",
-            joinColumns = @JoinColumn(name = "quotes_id"),
-            inverseJoinColumns = @JoinColumn(name = "tags_id")
-    )
-    private List<Tags> tagsForQuote;
 
-    public Quote(String text, String author, int quoteScore, List<Tags> tagsForQuote) {
+    public Quote(String text, String author, String tagName) {
         this.text = text;
         this.author = author;
-        this.quoteScore = quoteScore;
-        this.tagsForQuote = tagsForQuote;
+        this.tagName = tagName;
     }
 }

@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "Video")
@@ -18,22 +17,13 @@ public class Video {
     private int id;
 
     @Column(name = "song_url")
-    private String gifUrl;
+    private String songUrl;
 
-    @Column(name = "video_score")
-    private int quoteScore;
+    @Column(name = "tag_name")
+    private String tagName;
 
-    @ManyToMany
-    @JoinTable(
-            name = "video_tags",
-            joinColumns = @JoinColumn(name = "videos_id"),
-            inverseJoinColumns = @JoinColumn(name = "tags_id")
-    )
-    private List<Tags> tagsForVideo;
-
-    public Video(String gifUrl, int quoteScore, List<Tags> tagsForVideo) {
-        this.gifUrl = gifUrl;
-        this.quoteScore = quoteScore;
-        this.tagsForVideo = tagsForVideo;
+    public Video(String songUrl, String tagName) {
+        this.songUrl = songUrl;
+        this.tagName = tagName;
     }
 }

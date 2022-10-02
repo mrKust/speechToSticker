@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "Picture")
@@ -20,20 +19,11 @@ public class Picture {
     @Column(name = "picture_url")
     private String pictureURL;
 
-    @Column(name = "picture_rating")
-    private int pictureScore;
+    @Column(name = "tag_name")
+    private String tagName;
 
-    @ManyToMany
-    @JoinTable(
-            name = "picture_tags",
-            joinColumns = @JoinColumn(name = "pictures_id"),
-            inverseJoinColumns = @JoinColumn(name = "tags_id")
-    )
-    private List<Tags> tagsForPicture;
-
-    public Picture(String pictureURL, int pictureScore, List<Tags> tagsForPicture) {
+    public Picture(String pictureURL, String tagName) {
         this.pictureURL = pictureURL;
-        this.pictureScore = pictureScore;
-        this.tagsForPicture = tagsForPicture;
+        this.tagName = tagName;
     }
 }

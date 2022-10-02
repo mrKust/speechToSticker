@@ -1,7 +1,9 @@
 package com.ebka.speech.service.impl;
 
 import com.ebka.speech.dao.SongRepository;
+import com.ebka.speech.dao.TagsRepository;
 import com.ebka.speech.entity.Song;
+import com.ebka.speech.entity.Tags;
 import com.ebka.speech.service.contracts.SongService;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +14,11 @@ import java.util.Optional;
 public class SongServiceImpl implements SongService {
 
     private SongRepository songDAO;
+    private TagsRepository tagsDAO;
 
-    public SongServiceImpl(SongRepository songDAO) {
+    public SongServiceImpl(SongRepository songDAO, TagsRepository tagsDAO) {
         this.songDAO = songDAO;
+        this.tagsDAO = tagsDAO;
     }
 
     @Override
@@ -24,6 +28,14 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public boolean saveSong(Song song) {
+        Optional<Tags> byId = tagsDAO.findById(song.getTagName());
+        if (byId.isPresent()){
+            Tags tags = byId.get();
+            String idSong = tags.getIdSong();
+            idSong += ","+song.getId();
+            tags.setIdSong(idSong);
+            tagsDAO.save(tags);
+        }
         Song save = songDAO.save(song);
         if (save != null){
             return true;

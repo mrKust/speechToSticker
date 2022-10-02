@@ -1,7 +1,9 @@
 package com.ebka.speech.service.impl;
 
 import com.ebka.speech.dao.PoetyRepository;
+import com.ebka.speech.dao.TagsRepository;
 import com.ebka.speech.entity.Poety;
+import com.ebka.speech.entity.Tags;
 import com.ebka.speech.service.contracts.PoetyService;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +14,11 @@ import java.util.Optional;
 public class PoetyServiceImpl implements PoetyService {
 
     private PoetyRepository poetyDAO;
+    private TagsRepository tagsDAO;
 
-    public PoetyServiceImpl(PoetyRepository poetyDAO) {
+    public PoetyServiceImpl(PoetyRepository poetyDAO, TagsRepository tagsDAO) {
         this.poetyDAO = poetyDAO;
+        this.tagsDAO = tagsDAO;
     }
 
     @Override
@@ -24,6 +28,14 @@ public class PoetyServiceImpl implements PoetyService {
 
     @Override
     public boolean savePoety(Poety poety) {
+        Optional<Tags> byId = tagsDAO.findById(poety.getTagName());
+        if (byId.isPresent()){
+            Tags tags = byId.get();
+            String idPoety = tags.getIdPoety();
+            idPoety += ","+poety.getId();
+            tags.setIdPoety(idPoety);
+            tagsDAO.save(tags);
+        }
         Poety save = poetyDAO.save(poety);
         if (save != null){
             return true;

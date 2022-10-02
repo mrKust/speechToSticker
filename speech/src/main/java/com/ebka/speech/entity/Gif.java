@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "Gif")
@@ -20,20 +19,11 @@ public class Gif {
     @Column(name = "gif_url")
     private String gifUrl;
 
-    @Column(name = "quote_score")
-    private int quoteScore;
+    @Column(name = "tag_name")
+    private String tagName;
 
-    @ManyToMany
-    @JoinTable(
-            name = "gif_tags",
-            joinColumns = @JoinColumn(name = "gifs_id"),
-            inverseJoinColumns = @JoinColumn(name = "tags_id")
-    )
-    private List<Tags> tagsForGif;
-
-    public Gif(String gifUrl, int quoteScore, List<Tags> tagsForGif) {
+    public Gif(String gifUrl, String tagName) {
         this.gifUrl = gifUrl;
-        this.quoteScore = quoteScore;
-        this.tagsForGif = tagsForGif;
+        this.tagName = tagName;
     }
 }

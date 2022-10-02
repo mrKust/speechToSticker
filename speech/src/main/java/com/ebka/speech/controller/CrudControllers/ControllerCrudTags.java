@@ -19,7 +19,7 @@ public class ControllerCrudTags {
 
     @GetMapping("/{id}")
     public ResponseEntity getOne(@PathVariable String id){
-        Tags tags = tagsService.getTags(Integer.parseInt(id));
+        Tags tags = tagsService.getTags(id);
         if (tags != null){
             return ResponseEntity.ok(tags);
         }else{
@@ -49,7 +49,7 @@ public class ControllerCrudTags {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity delete(@PathVariable String id){
-        tagsService.deleteTags(Integer.parseInt(id));
+        tagsService.deleteTags(id);
         return ResponseEntity.ok().build();
     }
 }
