@@ -10,7 +10,7 @@ app = FastAPI()
 p1, p2 = Pipe(duplex=False)
 jq = JoinableQueue()
 
-y =yadisk.YaDisk("471d14940a26495da3a6f1fd73f6303d", "d360a30af4b341d18a3daf2d77aa4afd")
+y =yadisk.YaDisk("y0_AgAAAAAEnjtHAAh2ZQAAAADQQpFVwaI_1VTaSxKYF4jqPsFnYcvzgHA")
 url = y.get_code_url()
 homeDirectory = "cdn/"
 
