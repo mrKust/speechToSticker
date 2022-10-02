@@ -5,19 +5,23 @@ import os
 import speech_recognition as sr
 import json
 from pyffmpeg import FFmpeg
-from deeppavlov import configs
-
+import translate
+from transformers import RobertaTokenizerFast, TFRobertaForSequenceClassification, pipeline
 
 language = 'ru_RU'
 TOKEN = '5667635481:AAFXsE4kGoPFmniOXGk5_3ldA6mxs1rO1PA'
 bot = telebot.TeleBot(TOKEN)
 r = sr.Recognizer()
+tokenizer = RobertaTokenizerFast.from_pretrained("arpanghoshal/EmoRoBERTa")
+model = TFRobertaForSequenceClassification.from_pretrained("arpanghoshal/EmoRoBERTa")
+
+emotion = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
 
 def recognise(filename):
     with sr.AudioFile(filename) as source:
         audio_text = r.listen(source)
         try:
-            text = r.recognize_google(audio_text,language=language)
+            text = r.recognize_google(audio_text, language=language)
             print('Converting audio transcripts into text ...')
             print(text)
             return text
@@ -40,7 +44,8 @@ def voice_processing(message):
     ff = FFmpeg()
     ff.convert(inp, out)
     text = recognise(out)
-    bot.reply_to(message, text)
+    new_message = translate.transl(text, emotion)
+    bot.reply_to(message, new_message)
     # os.remove(file_name_full)
     # os.remove(file_name_full_converted)
 
@@ -50,6 +55,8 @@ def text_processing(message):
     message_from_user = json.dumps({'Text': message.text}, indent=4, ensure_ascii=False).encode('UTF8')
     print(message.text)
     print(message_from_user.decode())
+    new_message = translate.transl(message.text, emotion)
+    bot.reply_to(message, new_message)
 
 
 bot.polling()
