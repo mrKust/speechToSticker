@@ -28,16 +28,20 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public boolean saveSong(Song song) {
-        Optional<Tags> byId = tagsDAO.findById(song.getTagName());
-        if (byId.isPresent()){
-            Tags tags = byId.get();
-            String idSong = tags.getIdSong();
-            idSong += ","+song.getId();
-            tags.setIdSong(idSong);
-            tagsDAO.save(tags);
-        }
         Song save = songDAO.save(song);
         if (save != null){
+            Optional<Tags> byId = tagsDAO.findById(save.getTagName());
+            if (byId.isPresent()){
+                Tags tags = byId.get();
+                String idSong = tags.getIdSong();
+                if (idSong == null){
+                    idSong = ""+save.getId();
+                }else{
+                    idSong += ","+save.getId();
+                }
+                tags.setIdSong(idSong);
+                tagsDAO.save(tags);
+            }
             return true;
         }else{
             return false;

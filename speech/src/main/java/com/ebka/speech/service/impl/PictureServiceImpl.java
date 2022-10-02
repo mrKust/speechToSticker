@@ -28,16 +28,20 @@ public class PictureServiceImpl implements PictureService {
 
     @Override
     public boolean savePicture(Picture picture) {
-        Optional<Tags> byId = tagsDAO.findById(picture.getTagName());
-        if (byId.isPresent()){
-            Tags tags = byId.get();
-            String idPic = tags.getIdPic();
-            idPic += ","+picture.getId();
-            tags.setIdPic(idPic);
-            tagsDAO.save(tags);
-        }
         Picture save = pictureDAO.save(picture);
         if (save != null){
+            Optional<Tags> byId = tagsDAO.findById(save.getTagName());
+            if (byId.isPresent()){
+                Tags tags = byId.get();
+                String idPic = tags.getIdPic();
+                if (idPic == null){
+                    idPic = ""+save.getId();
+                }else{
+                    idPic += ","+save.getId();
+                }
+                tags.setIdPic(idPic);
+                tagsDAO.save(tags);
+            }
             return true;
         }else{
             return false;

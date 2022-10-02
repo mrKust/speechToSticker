@@ -28,16 +28,20 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public boolean saveVideo(Video video) {
-        Optional<Tags> byId = tagsDAO.findById(video.getTagName());
-        if (byId.isPresent()){
-            Tags tags = byId.get();
-            String idVideo = tags.getIdVideo();
-            idVideo += ","+video.getId();
-            tags.setIdVideo(idVideo);
-            tagsDAO.save(tags);
-        }
         Video save = videoDAO.save(video);
         if (save != null){
+            Optional<Tags> byId = tagsDAO.findById(save.getTagName());
+            if (byId.isPresent()){
+                Tags tags = byId.get();
+                String idVideo = tags.getIdVideo();
+                if (idVideo == null){
+                    idVideo = ""+save.getId();
+                }else{
+                    idVideo += ","+save.getId();
+                }
+                tags.setIdVideo(idVideo);
+                tagsDAO.save(tags);
+            }
             return true;
         } else{
             return false;

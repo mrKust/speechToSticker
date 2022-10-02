@@ -28,16 +28,21 @@ public class GifServiceImpl implements GifService {
 
     @Override
     public boolean saveGif(Gif gif) {
-        final Optional<Tags> byId = tagsDAO.findById(gif.getTagName());
-        if (byId.isPresent()){
-            Tags tags = byId.get();
-            String idGif = tags.getIdGif();
-            idGif += ","+gif.getId();
-            tags.setIdGif(idGif);
-            tagsDAO.save(tags);
-        }
+
         Gif gifAnswer = gifDAO.save(gif);
         if (gifAnswer != null){
+            final Optional<Tags> byId = tagsDAO.findById(gifAnswer.getTagName());
+            if (byId.isPresent()){
+                Tags tags = byId.get();
+                String idGif = tags.getIdGif();
+                if (idGif == null){
+                    idGif = ""+gifAnswer.getId();
+                }else{
+                    idGif += ","+gifAnswer.getId();
+                }
+                tags.setIdGif(idGif);
+                tagsDAO.save(tags);
+            }
             return true;
         }else{
             return false;

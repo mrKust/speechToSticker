@@ -28,16 +28,20 @@ public class PoetyServiceImpl implements PoetyService {
 
     @Override
     public boolean savePoety(Poety poety) {
-        Optional<Tags> byId = tagsDAO.findById(poety.getTagName());
-        if (byId.isPresent()){
-            Tags tags = byId.get();
-            String idPoety = tags.getIdPoety();
-            idPoety += ","+poety.getId();
-            tags.setIdPoety(idPoety);
-            tagsDAO.save(tags);
-        }
         Poety save = poetyDAO.save(poety);
         if (save != null){
+            Optional<Tags> byId = tagsDAO.findById(save.getTagName());
+            if (byId.isPresent()){
+                Tags tags = byId.get();
+                String idPoety = tags.getIdPoety();
+                if (idPoety == null){
+                    idPoety = ""+save.getId();
+                }else{
+                    idPoety += ","+save.getId();
+                }
+                tags.setIdPoety(idPoety);
+                tagsDAO.save(tags);
+            }
             return true;
         }else {
             return false;

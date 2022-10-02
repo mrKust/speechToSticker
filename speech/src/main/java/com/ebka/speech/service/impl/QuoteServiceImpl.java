@@ -28,16 +28,20 @@ public class QuoteServiceImpl implements QuoteService {
 
     @Override
     public boolean saveQuote(Quote quote) {
-        Optional<Tags> byId = tagsDAO.findById(quote.getTagName());
-        if (byId.isPresent()){
-            Tags tags = byId.get();
-            String idQuote = tags.getIdQuote();
-            idQuote += ","+quote.getId();
-            tags.setIdQuote(idQuote);
-            tagsDAO.save(tags);
-        }
         Quote save = quoteDAO.save(quote);
         if (save != null){
+            Optional<Tags> byId = tagsDAO.findById(save.getTagName());
+            if (byId.isPresent()){
+                Tags tags = byId.get();
+                String idQuote = tags.getIdQuote();
+                if (idQuote == null){
+                    idQuote = ""+save.getId();
+                }else{
+                    idQuote += ","+save.getId();
+                }
+                tags.setIdQuote(idQuote);
+                tagsDAO.save(tags);
+            }
             return true;
         }else{
             return false;
