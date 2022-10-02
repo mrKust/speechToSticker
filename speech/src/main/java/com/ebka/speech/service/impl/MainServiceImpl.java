@@ -33,9 +33,11 @@ public class MainServiceImpl implements MainService {
     }
 
     @Override
-    public Map getEmotion(PairDTO inputData) {
-        Map<String, String> result = new HashMap<>();
-        int[] choosenTypes = Stream.of(inputData.getParamTwo().split(","))
+    public PairDTO getEmotion(PairDTO inputData) {
+        //Map<String, String> result = new HashMap<>();
+        PairDTO answer = new PairDTO();
+        System.out.println();
+        int[] choosenTypes = Stream.of(inputData.getParamTwo().split(",")).map(elem->elem.trim())
                 .mapToInt(Integer::parseInt)
                 .toArray();
         Random random = new Random();
@@ -44,68 +46,84 @@ public class MainServiceImpl implements MainService {
         int resultId;
         switch (mediaPos){
             case 0:
-                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdGif().split(","))
+                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdGif().split(",")).map(elem->elem.trim())
                         .mapToInt(Integer::parseInt)
                         .toArray();
                 resultId = random.nextInt(idElems.length);
-                Gif gif = gifService.getGif(resultId);
+                Gif gif = gifService.getGif(idElems[resultId]);
                 if (gif != null){
-                    result.put("gif",gif.getGifUrl());
+                    answer.setParamOne("gif");
+                    answer.setParamTwo(gif.getGifUrl());
+                    //result.put("gif",gif.getGifUrl());
                 }
                 break;
             case 1:
-                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdPic().split(","))
+                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdPic().split(",")).map(elem->elem.trim())
                         .mapToInt(Integer::parseInt)
                         .toArray();
                 resultId = random.nextInt(idElems.length);
-                Picture picture = pictureService.getPicture(resultId);
+                Picture picture = pictureService.getPicture(idElems[resultId]);
                 if (picture != null){
-                    result.put("picture",picture.getPictureURL());
+                    answer.setParamOne("picture");
+                    answer.setParamTwo(picture.getPictureURL());
+                    //result.put("picture",picture.getPictureURL());
                 }
                 break;
             case 2:
-                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdPoety().split(","))
+                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdPoety().split(",")).map(elem->elem.trim())
                         .mapToInt(Integer::parseInt)
                         .toArray();
                 resultId = random.nextInt(idElems.length);
-                Poety poety = poetyService.getPoety(resultId);
+                Poety poety = poetyService.getPoety(idElems[resultId]);
                 if (poety != null){
-                    result.put("poety",poety.getText()+"/n"+poety.getAuthor());
+                    answer.setParamOne("poety");
+                    answer.setParamTwo(poety.getText()+"/n"+poety.getAuthor());
+
+                    //result.put("poety",poety.getText()+"/n"+poety.getAuthor());
                 }
                 break;
             case 3:
-                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdQuote().split(","))
+                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdQuote().split(",")).map(elem->elem.trim())
                         .mapToInt(Integer::parseInt)
                         .toArray();
                 resultId = random.nextInt(idElems.length);
-                Quote quote = quoteService.getQuote(resultId);
+                Quote quote = quoteService.getQuote(idElems[resultId]);
                 if (quote != null){
-                    result.put("quote",quote.getText()+"/n"+quote.getAuthor());
+                    answer.setParamOne("quote");
+                    answer.setParamTwo(quote.getText()+"/n"+quote.getAuthor());
+
+                    //result.put("quote",quote.getText()+"/n"+quote.getAuthor());
                 }
                 break;
             case 4:
-                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdSong().split(","))
+                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdSong().split(",")).map(elem->elem.trim())
                         .mapToInt(Integer::parseInt)
                         .toArray();
                 resultId = random.nextInt(idElems.length);
-                Song song = songService.getSong(resultId);
+                Song song = songService.getSong(idElems[resultId]);
                 if (song != null){
-                    result.put("song",song.getSongUrl());
+                    answer.setParamOne("song");
+                    answer.setParamTwo(song.getSongUrl());
+
+//                    result.put("song",song.getSongUrl());
                 }
                 break;
             case 5:
-                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdVideo().split(","))
+                idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdVideo().split(",")).map(elem->elem.trim())
                         .mapToInt(Integer::parseInt)
                         .toArray();
                 resultId = random.nextInt(idElems.length);
-                Video video = videoService.getVideo(resultId);
+                Video video = videoService.getVideo(idElems[resultId]);
                 if (video != null){
-                    result.put("video",video.getSongUrl());
+
+                    answer.setParamOne("video");
+                    answer.setParamTwo(video.getSongUrl());
+                    //result.put("video",video.getSongUrl());
                 }
                 break;
             default:
-                return Collections.EMPTY_MAP;
+                return null;
         }
-        return result;
+        return answer;
     }
 }

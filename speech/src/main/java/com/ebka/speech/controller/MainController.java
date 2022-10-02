@@ -19,8 +19,10 @@ public class MainController {
 
     @PostMapping("/getReaction")
     public ResponseEntity getOutputData(@RequestBody PairDTO inputData) {
-        Map<String, String> result = mainService.getEmotion(inputData);
-        if (!result.isEmpty())
+        //System.out.println("i am in main method" + inputData.getParamOne() + inputData.getParamTwo());
+        //Map<String, String> result = mainService.getEmotion(inputData);
+        PairDTO result = mainService.getEmotion(inputData);
+        if (result !=null)
             return ResponseEntity.ok(result);
         else return ResponseEntity.noContent().build();
     }

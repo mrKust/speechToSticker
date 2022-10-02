@@ -7,5 +7,5 @@ import java.util.Map;
 
 public interface MainService {
 
-    public Map<String, String> getEmotion(PairDTO inputData);
+    public PairDTO getEmotion(PairDTO inputData);
 }
