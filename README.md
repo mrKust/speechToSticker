@@ -1,5 +1,5 @@
-# speechToSticker
-sentimental telegram bot
+# sentimental telegram bot
+
 ## Description
 This repository presents a description of a sentimental telegram bot. Based on the received text or voice message, 
 this bot analyzes the mood of the sender and sends a picture, gif, quote, poety, video or song in response.
@@ -33,7 +33,16 @@ Principle of operation:
 - DeepPavlov
 
 ## Project components interaction
-![image](https://user-images.githubusercontent.com/79422421/194120999-21debf77-2345-4b73-859f-7631260b4ec3.png)
+![image](https://user-images.githubusercontent.com/79422421/194120999-21debf77-2345-4b73-859f-7631260b4ec3.png)<br> *Pic 1.Architecture.* <br>
 
 
 ## Application functionality demonstration
+![image](https://user-images.githubusercontent.com/79422421/194142808-844371fb-0372-4db8-b12c-70c065efa4b4.png)<br> *Pic 2. Exmaple with neutral.* <br>
+![image](https://user-images.githubusercontent.com/79422421/194143473-20d9edb8-f1af-48a0-bfdf-4499b26d2cc5.png)<br> *Pic 3. Exmaple with positive.* <br>
+![image](https://user-images.githubusercontent.com/79422421/194143546-077f0915-4826-4c42-8965-f0ebb10c0d02.png)<br> *Pic 4. Exmaple with negative.* <br>
+![image](https://user-images.githubusercontent.com/79422421/194143617-fc471b1b-6152-44e2-be4f-529aefc0f27a.png)<br> *Pic 5. Exmaple with gif.* <br>
+
+
+
+
+
