@@ -6,7 +6,7 @@ this bot analyzes the mood of the sender and sends a picture, gif, quote, poety,
 Principle of operation: 
 1) The user sends a message to the bot; 
 2) The incoming message gets to the server written in python; 
-3) Then the data is sent to the deeppavlov library input to analyze the emotionality of this message. As a result, a conclusion is made about the emotional component (positive, negative, neutral); 
+3) Then the data is sent to the EmoRoBERTa library input to analyze the emotionality of this message. As a result, a conclusion is made about the emotional component (positive, negative, neutral); 
 4) Then the result is sent to the spring boot server, where the reaction is selected and a specific reaction, the result is sent to the python server; 
 5) The result is sent to the chat to the user.
 
@@ -30,7 +30,7 @@ Principle of operation:
 - FastAPI
 - Python
 - Uvicorn
-- DeepPavlov
+- EmoRoBERTa
 
 ## Project components interaction
 ![image](https://user-images.githubusercontent.com/79422421/194120999-21debf77-2345-4b73-859f-7631260b4ec3.png)<br> *Pic 1.Architecture.* <br>
