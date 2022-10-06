@@ -141,27 +141,56 @@ def callback_worker(call):
     global params
     global params_str
     if call.data == "0":
-        bot.answer_callback_query(call.id, text="Выбраны гифки")
-        params.append(0)
+        if params.__contains__(0):
+            bot.answer_callback_query(call.id, text="Гифки убраны")
+            params.remove(0)
+        else:
+            bot.answer_callback_query(call.id, text="Выбраны гифки")
+            params.append(0)
+            params = list(set(params))
     if call.data == "1":
-        bot.answer_callback_query(call.id, text="Выбраны картинки")
-        params.append(1)
+        if params.__contains__(1):
+            bot.answer_callback_query(call.id, text="Картинки убраны")
+            params.remove(1)
+        else:
+            bot.answer_callback_query(call.id, text="Выбраны картинки")
+            params.append(1)
+            params = list(set(params))
     if call.data == '2':
-        bot.answer_callback_query(call.id, text="Выбраны стихи")
-        params.append(2)
+        if params.__contains__(2):
+            bot.answer_callback_query(call.id, text="Стихи убраны")
+            params.remove(2)
+        else:
+            bot.answer_callback_query(call.id, text="Выбраны стихи")
+            params.append(2)
+            params = list(set(params))
     if call.data == '3':
-        bot.answer_callback_query(call.id, text="Выбраны цитаты")
-        params.append(3)
+        if params.__contains__(3):
+            bot.answer_callback_query(call.id, text="Цитаты убраны")
+            params.remove(3)
+        else:
+            bot.answer_callback_query(call.id, text="Выбраны цитаты")
+            params.append(3)
+            params = list(set(params))
     if call.data == '4':
-        bot.answer_callback_query(call.id, text="Выбраны песни")
-        params.append(4)
+        if params.__contains__(4):
+            bot.answer_callback_query(call.id, text="Песни убраны")
+            params.remove(4)
+        else:
+            bot.answer_callback_query(call.id, text="Выбраны песни")
+            params.append(4)
+            params = list(set(params))
     if call.data == '5':
-        bot.answer_callback_query(call.id, text="Выбраны видео")
-        params.append(5)
+        if params.__contains__(5):
+            bot.answer_callback_query(call.id, text="Видео убраны")
+            params.remove(5)
+        else:
+            bot.answer_callback_query(call.id, text="Выбраны видео")
+            params.append(5)
+            params = list(set(params))
     if call.data == '6':
         params_str = str(set(params))[1:-1]
-        bot.answer_callback_query(call.id, show_alert=True, text="Теперь можете писать всё, что угодно!")
-        # params = params[:-1]
+        bot.answer_callback_query(call.id, show_alert=True, text="Вы выбрали типы медиа, можете писать всё, что угодно!")
         print(params)
         return params_str
     # print(params)
