@@ -25,22 +25,21 @@ async def endpnt(request: Request):
     data = await request.json()
     jq.put(data)
 
-@app.get("/{item_path}")
-async def getPicture(item_path: str):
+def getPicture(item_path: str):
     print(item_path)
     name = item_path.split(".")
-    if name[1] == "jpg":
-        print("picture")
-        file = y.download(homeDirectory + item_path, "picture." + name[1])
-    elif name[1] == "gif":
-        print("gif")
-        file = y.download(homeDirectory + item_path, "animatedPic." + name[1])
-    elif name[1] == "mp4":
-        print("video")
-        file = y.download(homeDirectory + item_path, "video." + name[1])
-    elif name[1] == "mp3":
-        print("audio")
-        y.download(homeDirectory + item_path, "audio." + name[1])
+    file = None
+
+    if (name[1] == "mp4"):
+        file = y.download(homeDirectory + item_path, 'video.'+name[1])
+    if (name[1] == "mp3"):
+        file = y.download(homeDirectory + item_path, 'audio.'+name[1])
+    if (name[1] == "jpg"):
+        file = y.download(homeDirectory + item_path, 'picture.'+name[1])
+    if (name[1] == "gif"):
+        file = y.download(homeDirectory + item_path, 'gif.'+name[1])
+
+    return file
 
 
 if __name__ == "__main__":
