@@ -34,9 +34,7 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public PairDTO getEmotion(PairDTO inputData) {
-        //Map<String, String> result = new HashMap<>();
         PairDTO answer = new PairDTO();
-        System.out.println();
         int[] choosenTypes = Stream.of(inputData.getParamTwo().split(",")).map(elem->elem.trim())
                 .mapToInt(Integer::parseInt)
                 .toArray();
@@ -44,7 +42,7 @@ public class MainServiceImpl implements MainService {
         int mediaPos = random.nextInt(choosenTypes.length);
         int[] idElems;
         int resultId;
-        switch (mediaPos){
+        switch (choosenTypes[mediaPos]){
             case 0:
                 idElems = Stream.of(tagsService.getTags(inputData.getParamOne()).getIdGif().split(",")).map(elem->elem.trim())
                         .mapToInt(Integer::parseInt)
@@ -54,7 +52,6 @@ public class MainServiceImpl implements MainService {
                 if (gif != null){
                     answer.setParamOne("gif");
                     answer.setParamTwo(gif.getGifUrl());
-                    //result.put("gif",gif.getGifUrl());
                 }
                 break;
             case 1:
@@ -66,7 +63,6 @@ public class MainServiceImpl implements MainService {
                 if (picture != null){
                     answer.setParamOne("picture");
                     answer.setParamTwo(picture.getPictureURL());
-                    //result.put("picture",picture.getPictureURL());
                 }
                 break;
             case 2:
@@ -78,8 +74,6 @@ public class MainServiceImpl implements MainService {
                 if (poety != null){
                     answer.setParamOne("poety");
                     answer.setParamTwo(poety.getText()+"/n"+poety.getAuthor());
-
-                    //result.put("poety",poety.getText()+"/n"+poety.getAuthor());
                 }
                 break;
             case 3:
@@ -91,8 +85,6 @@ public class MainServiceImpl implements MainService {
                 if (quote != null){
                     answer.setParamOne("quote");
                     answer.setParamTwo(quote.getText()+"/n"+quote.getAuthor());
-
-                    //result.put("quote",quote.getText()+"/n"+quote.getAuthor());
                 }
                 break;
             case 4:
@@ -104,8 +96,6 @@ public class MainServiceImpl implements MainService {
                 if (song != null){
                     answer.setParamOne("song");
                     answer.setParamTwo(song.getSongUrl());
-
-//                    result.put("song",song.getSongUrl());
                 }
                 break;
             case 5:
@@ -115,10 +105,8 @@ public class MainServiceImpl implements MainService {
                 resultId = random.nextInt(idElems.length);
                 Video video = videoService.getVideo(idElems[resultId]);
                 if (video != null){
-
                     answer.setParamOne("video");
                     answer.setParamTwo(video.getSongUrl());
-                    //result.put("video",video.getSongUrl());
                 }
                 break;
             default:
