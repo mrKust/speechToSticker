@@ -172,10 +172,10 @@ def get_types(message):
     keyboard.add(key_two)
     key_three = types.InlineKeyboardButton(text='Цитаты', callback_data='3')
     keyboard.add(key_three)
-    # key_four = types.InlineKeyboardButton(text='Песни', callback_data='4')
-    # keyboard.add(key_four)
-    # key_five = types.InlineKeyboardButton(text='Видео', callback_data='5')
-    # keyboard.add(key_five)
+    key_four = types.InlineKeyboardButton(text='Песни', callback_data='4')
+    keyboard.add(key_four)
+    key_five = types.InlineKeyboardButton(text='Видео', callback_data='5')
+    keyboard.add(key_five)
     key_six = types.InlineKeyboardButton(text='Всё выбрано, далее...', callback_data='6')
     types.KeyboardButtonPollType()
     keyboard.add(key_six)
@@ -186,6 +186,7 @@ def get_types(message):
 @bot.message_handler(content_types=['text'])
 def text_processing(message):
     # message_from_user = json.dumps({'Text': message.text}, indent=4, ensure_ascii=False).encode('UTF8')
+    global params_str
     chatid = message.chat.id
     print(chatid)
     print(message.text)
@@ -200,7 +201,7 @@ def text_processing(message):
     print(new_message)
     body = json.dumps({'paramOne': new_message, 'paramTwo': params_str})
     headers = {'content-type': 'application/json'}
-    responce = requests.post('http://localhost:6868/api/getReaction', data=body, headers=headers)
+    responce = requests.post('http://localhost:8003/api/getReaction', data=body, headers=headers)
     # print(responce.request.body)
     # responce = requests.get('http://localhost:8080/tags/all')
     print(responce.text)
@@ -215,7 +216,7 @@ def text_processing(message):
     else:
         namefile = fileRoute.split(',')[1].split(':')[1][1:-2]
 
-    # type = responce.text
+    type = responce.text
     if type.find("poety") != -1:
         bot.reply_to(message, namefile)
     elif type.find("quote") != -1:
@@ -229,57 +230,7 @@ def text_processing(message):
             if all_files_on_disk[i].FIELDS['name'] == namefile:
                 fileurl = all_files_on_disk[i].FIELDS['file']
                 break
-        # namefile = namefile.split('.')[0]
-        # if namefile == 'angryDog':
-        #     namefile = 'AgACAgIAAxkBAAICIGM5j77QSOvWgtoTVVxdcmYwKTjjAAIbwzEb3orQSTOEtSIhwEEXAQADAgADcwADKgQ'
-        # if namefile == 'doraCute':
-        #     namefile = 'AgACAgIAAxkBAAICIWM5kAT3Tdg6jORJX4W-lBzTyDP9AAIdwzEb3orQSVZ_ymjkG5otAQADAgADcwADKgQ'
-        # if namefile == 'goodCat':
-        #     namefile = 'AgACAgIAAxkBAAICImM5kDMnH3Alwk0OFEHXXcGawoY-AAIewzEb3orQSdaiJR6MD_CcAQADAgADcwADKgQ'
-        # if namefile == 'sadCat':
-        #     namefile = 'AgACAgIAAxkBAAICI2M5kFz6RD59ceKT5Sm1ttwMwc3rAAIfwzEb3orQSROIHnD6_vldAQADAgADcwADKgQ'
-        # if namefile == 'smokingCat':
-        #     namefile = 'AgACAgIAAxkBAAICJGM5kKL2Kxa-pwHrC9vj8wMvmVe4AAIgwzEb3orQSaq2KUkwE-kqAQADAgADcwADKgQ'
-        # if namefile == 'batemanCool':
-        #     namefile = 'CgACAgIAAxkBAAICM2M5lLI2HU6kmvvuAgbhPgWFUpurAAJHHgAC3orQSZdixCiKx7pfKgQ'
-        # if namefile == 'batemanNeutral':
-        #     namefile = 'CgACAgIAAxkBAAICNGM5lLvvX8E2b8TBvch_NtGOlU-YAAJIHgAC3orQSfvYBK-G_ej-KgQ'
-        # if namefile == 'batemanOUU':
-        #     namefile = 'CgACAgIAAxkBAAICNWM5lQABgfE07IXkXCJsD1FGT1enlgACSh4AAt6K0El6N1sKCzpYSCoE'
-        # if namefile == 'batemanAngry':
-        #     namefile = 'CgACAgIAAxkBAAICNmM5lRzFxiUV9tb-i-_VdC03mqBZAAJMHgAC3orQSboRRmOVH6HPKgQ'
-        # print(namefile)
-        # bot.reply_to(message, namefile)
-        # base_url = 'https://cloud-api.yandex.net/v1/disk/public/resources/download?'
-        # link = namefile  # Сюда вписываете вашу ссылку
-        #
-        # # Получаем загрузочную ссылку
-        # final_url = base_url + 'public_key=' + link
-        # response = requests.get(final_url)
-        # print(response)
-        # download_url = response.json()['href']
-        #
-        # download_response = requests.get(download_url)
-        # if (namefile.find("mp4") != 1):
-        #     with open('video.mp4', 'wb') as f:
-        #         f.write(download_response.content)
-        #         f.close()
-        # if (namefile.find("mp3") != 1):
-        #     with open('audio.mp3', 'wb') as f:
-        #         f.write(download_response.content)
-        #         f.close()
-        # if (namefile.find("jpg") != 1):
-        #     with open('picture.jpg', 'wb') as f:
-        #         f.write(download_response.content)
-        #         f.close()
-        # if (namefile.find("gif") != 1):
-        #     with open('gif.gif', 'wb') as f:
-        #         f.write(download_response.content)
-        #         f.close()
-        #
-        # print(type)
-        # # bot.reply_to(message, namefile)
-        #
+
         if type.find("picture") != -1:
             bot.send_photo(chat_id=chatid, photo=fileurl)
         elif type.find("gif") != -1:
