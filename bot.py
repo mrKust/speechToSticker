@@ -12,7 +12,7 @@ import requests
 import yadisk
 
 params = []
-params_str = ''
+params_str = '0, 1, 2, 3, 4, 5'
 language = 'ru_RU'
 TOKEN = '5667635481:AAFXsE4kGoPFmniOXGk5_3ldA6mxs1rO1PA'
 bot = telebot.TeleBot(TOKEN)
@@ -52,7 +52,10 @@ def voice_processing(message):
     ff = FFmpeg()
     ff.convert(inp, out)
     text = recognise(out)
-    original_emotion = translate.transl(text, emotion)
+
+    original_emotion, translated_text = translate.transl(text, emotion)
+    bot.reply_to(message, text=text+'. Перевод: '+translated_text)
+    # bot.reply_to(message, text=translated_text)
     print(original_emotion)
     bot.reply_to(message, original_emotion)
     new_message = original_emotion[:]
@@ -199,7 +202,8 @@ def text_processing(message):
     chatid = message.chat.id
     print(chatid)
     print(message.text)
-    new_message = translate.transl(message.text, emotion)
+    tr = ''
+    new_message, tr = translate.transl(message.text, emotion)
     bot.reply_to(message, new_message)
     if new_message == 'admiration' or new_message == 'amusement' or new_message == 'admiration' or new_message == 'approval' or new_message == 'caring' or new_message == 'desire' or new_message == 'excitement' or new_message == 'gratitude' or new_message == 'joy' or new_message == 'love' or new_message == 'optimism' or new_message == 'pride' or new_message == 'relief':
         new_message = 'positive'

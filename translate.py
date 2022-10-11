@@ -10,5 +10,5 @@ def transl(original_text, emotion):
 
     emotion_labels = emotion(translation.text)
     print(emotion_labels)
-    return emotion_labels[0]['label']
+    return emotion_labels[0]['label'], translation.text
 
