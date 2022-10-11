@@ -10,8 +10,9 @@ from telebot import types
 import translate
 from transformers import RobertaTokenizerFast, TFRobertaForSequenceClassification, pipeline
 import requests
-import endpoint
+# import endpoint
 import yadisk
+
 params = []
 params_str = ''
 language = 'ru_RU'
@@ -20,8 +21,8 @@ bot = telebot.TeleBot(TOKEN)
 r = sr.Recognizer()
 tokenizer = RobertaTokenizerFast.from_pretrained('arpanghoshal/EmoRoBERTa')
 model = TFRobertaForSequenceClassification.from_pretrained('arpanghoshal/EmoRoBERTa')
-# y =yadisk.YaDisk("y0_AgAAAAAEnjtHAAh2ZQAAAADQQpFVwaI_1VTaSxKYF4jqPsFnYcvzgHA")
-url = 'https://disk.yandex.ru/d/2-lYAGKWbxIW5A/'
+y = yadisk.YaDisk(token="y0_AgAAAAAEnjtHAAh2ZQAAAADQQpFVwaI_1VTaSxKYF4jqPsFnYcvzgHA")
+all_files_on_disk = list(y.listdir("/cdn"))
 # homeDirectory = "cdn/"
 emotion = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
 
@@ -100,42 +101,6 @@ def voice_processing(message):
     # os.remove(file_name_full_converted)
 
 
-@bot.message_handler(content_types=['photo'])
-# def photo_proccessing(message):
-#     photoid = message.photo[0].file_id
-#     print(photoid)
-
-
-@bot.message_handler(content_types=['animation'])
-def gif_proccessing(message):
-    gifid = message.animation.file_id
-    gifname = message.animation.file_name
-    gifs = []
-    gifs.append([gifid, gifname])
-    print(gifs)
-
-
-def get_types(message):
-    keyboard = types.InlineKeyboardMarkup()  # наша клавиатура
-    key_zero = types.InlineKeyboardButton(text='Гифки', callback_data='0')
-    keyboard.add(key_zero)
-    key_one = types.InlineKeyboardButton(text='Картинки', callback_data='1')
-    keyboard.add(key_one)
-    key_two = types.InlineKeyboardButton(text='Стихи', callback_data='2')
-    keyboard.add(key_two)
-    key_three = types.InlineKeyboardButton(text='Цитаты', callback_data='3')
-    keyboard.add(key_three)
-    # key_four = types.InlineKeyboardButton(text='Песни', callback_data='4')
-    # keyboard.add(key_four)
-    # key_five = types.InlineKeyboardButton(text='Видео', callback_data='5')
-    # keyboard.add(key_five)
-    key_six = types.InlineKeyboardButton(text='Всё выбрано, далее...', callback_data='6')
-    types.KeyboardButtonPollType()
-    keyboard.add(key_six)
-    question = 'Какой контент вы хотите получать?'
-    bot.send_message(message.chat.id, text=question, reply_markup=keyboard)
-
-
 @bot.callback_query_handler(func=lambda call: True)
 def callback_worker(call):
     global params
@@ -196,14 +161,29 @@ def callback_worker(call):
     # print(params)
 
 
+@bot.message_handler(commands=['start'])
+def get_types(message):
+    keyboard = types.InlineKeyboardMarkup()  # наша клавиатура
+    key_zero = types.InlineKeyboardButton(text='Гифки', callback_data='0')
+    keyboard.add(key_zero)
+    key_one = types.InlineKeyboardButton(text='Картинки', callback_data='1')
+    keyboard.add(key_one)
+    key_two = types.InlineKeyboardButton(text='Стихи', callback_data='2')
+    keyboard.add(key_two)
+    key_three = types.InlineKeyboardButton(text='Цитаты', callback_data='3')
+    keyboard.add(key_three)
+    # key_four = types.InlineKeyboardButton(text='Песни', callback_data='4')
+    # keyboard.add(key_four)
+    # key_five = types.InlineKeyboardButton(text='Видео', callback_data='5')
+    # keyboard.add(key_five)
+    key_six = types.InlineKeyboardButton(text='Всё выбрано, далее...', callback_data='6')
+    types.KeyboardButtonPollType()
+    keyboard.add(key_six)
+    question = 'Какой контент вы хотите получать?'
+    bot.send_message(message.chat.id, text=question, reply_markup=keyboard)
+
+
 @bot.message_handler(content_types=['text'])
-def receive_message(message):
-    if message.text == '/start':
-         params = get_types(message)
-    else:
-        text_processing(message)
-
-
 def text_processing(message):
     # message_from_user = json.dumps({'Text': message.text}, indent=4, ensure_ascii=False).encode('UTF8')
     chatid = message.chat.id
@@ -220,7 +200,7 @@ def text_processing(message):
     print(new_message)
     body = json.dumps({'paramOne': new_message, 'paramTwo': params_str})
     headers = {'content-type': 'application/json'}
-    responce = requests.post('http://localhost:8080/api/getReaction', data=body, headers=headers)
+    responce = requests.post('http://localhost:6868/api/getReaction', data=body, headers=headers)
     # print(responce.request.body)
     # responce = requests.get('http://localhost:8080/tags/all')
     print(responce.text)
@@ -235,33 +215,40 @@ def text_processing(message):
     else:
         namefile = fileRoute.split(',')[1].split(':')[1][1:-2]
 
-    type = responce.text
+    # type = responce.text
     if type.find("poety") != -1:
         bot.reply_to(message, namefile)
     elif type.find("quote") != -1:
         bot.reply_to(message, namefile)
     else:
+        # namefile = type.text
         # namefile = endpoint.getPicture(namefile)
-        namefile = namefile.split('.')[0]
-        if namefile == 'angryDog':
-            namefile = 'AgACAgIAAxkBAAICIGM5j77QSOvWgtoTVVxdcmYwKTjjAAIbwzEb3orQSTOEtSIhwEEXAQADAgADcwADKgQ'
-        if namefile == 'doraCute':
-            namefile = 'AgACAgIAAxkBAAICIWM5kAT3Tdg6jORJX4W-lBzTyDP9AAIdwzEb3orQSVZ_ymjkG5otAQADAgADcwADKgQ'
-        if namefile == 'goodCat':
-            namefile = 'AgACAgIAAxkBAAICImM5kDMnH3Alwk0OFEHXXcGawoY-AAIewzEb3orQSdaiJR6MD_CcAQADAgADcwADKgQ'
-        if namefile == 'sadCat':
-            namefile = 'AgACAgIAAxkBAAICI2M5kFz6RD59ceKT5Sm1ttwMwc3rAAIfwzEb3orQSROIHnD6_vldAQADAgADcwADKgQ'
-        if namefile == 'smokingCat':
-            namefile = 'AgACAgIAAxkBAAICJGM5kKL2Kxa-pwHrC9vj8wMvmVe4AAIgwzEb3orQSaq2KUkwE-kqAQADAgADcwADKgQ'
-        if namefile == 'batemanCool':
-            namefile = 'CgACAgIAAxkBAAICM2M5lLI2HU6kmvvuAgbhPgWFUpurAAJHHgAC3orQSZdixCiKx7pfKgQ'
-        if namefile == 'batemanNeutral':
-            namefile = 'CgACAgIAAxkBAAICNGM5lLvvX8E2b8TBvch_NtGOlU-YAAJIHgAC3orQSfvYBK-G_ej-KgQ'
-        if namefile == 'batemanOUU':
-            namefile = 'CgACAgIAAxkBAAICNWM5lQABgfE07IXkXCJsD1FGT1enlgACSh4AAt6K0El6N1sKCzpYSCoE'
-        if namefile == 'batemanAngry':
-            namefile = 'CgACAgIAAxkBAAICNmM5lRzFxiUV9tb-i-_VdC03mqBZAAJMHgAC3orQSboRRmOVH6HPKgQ'
-        print(namefile)
+        names_and_links = ()
+        fileurl = ''
+        for i in range(len(all_files_on_disk)):
+            if all_files_on_disk[i].FIELDS['name'] == namefile:
+                fileurl = all_files_on_disk[i].FIELDS['file']
+                break
+        # namefile = namefile.split('.')[0]
+        # if namefile == 'angryDog':
+        #     namefile = 'AgACAgIAAxkBAAICIGM5j77QSOvWgtoTVVxdcmYwKTjjAAIbwzEb3orQSTOEtSIhwEEXAQADAgADcwADKgQ'
+        # if namefile == 'doraCute':
+        #     namefile = 'AgACAgIAAxkBAAICIWM5kAT3Tdg6jORJX4W-lBzTyDP9AAIdwzEb3orQSVZ_ymjkG5otAQADAgADcwADKgQ'
+        # if namefile == 'goodCat':
+        #     namefile = 'AgACAgIAAxkBAAICImM5kDMnH3Alwk0OFEHXXcGawoY-AAIewzEb3orQSdaiJR6MD_CcAQADAgADcwADKgQ'
+        # if namefile == 'sadCat':
+        #     namefile = 'AgACAgIAAxkBAAICI2M5kFz6RD59ceKT5Sm1ttwMwc3rAAIfwzEb3orQSROIHnD6_vldAQADAgADcwADKgQ'
+        # if namefile == 'smokingCat':
+        #     namefile = 'AgACAgIAAxkBAAICJGM5kKL2Kxa-pwHrC9vj8wMvmVe4AAIgwzEb3orQSaq2KUkwE-kqAQADAgADcwADKgQ'
+        # if namefile == 'batemanCool':
+        #     namefile = 'CgACAgIAAxkBAAICM2M5lLI2HU6kmvvuAgbhPgWFUpurAAJHHgAC3orQSZdixCiKx7pfKgQ'
+        # if namefile == 'batemanNeutral':
+        #     namefile = 'CgACAgIAAxkBAAICNGM5lLvvX8E2b8TBvch_NtGOlU-YAAJIHgAC3orQSfvYBK-G_ej-KgQ'
+        # if namefile == 'batemanOUU':
+        #     namefile = 'CgACAgIAAxkBAAICNWM5lQABgfE07IXkXCJsD1FGT1enlgACSh4AAt6K0El6N1sKCzpYSCoE'
+        # if namefile == 'batemanAngry':
+        #     namefile = 'CgACAgIAAxkBAAICNmM5lRzFxiUV9tb-i-_VdC03mqBZAAJMHgAC3orQSboRRmOVH6HPKgQ'
+        # print(namefile)
         # bot.reply_to(message, namefile)
         # base_url = 'https://cloud-api.yandex.net/v1/disk/public/resources/download?'
         # link = namefile  # Сюда вписываете вашу ссылку
@@ -294,13 +281,13 @@ def text_processing(message):
         # # bot.reply_to(message, namefile)
         #
         if type.find("picture") != -1:
-            bot.send_photo(chat_id=chatid, photo=namefile)
+            bot.send_photo(chat_id=chatid, photo=fileurl)
         elif type.find("gif") != -1:
-            bot.send_animation(chat_id=chatid, animation=namefile)
+            bot.send_animation(chat_id=chatid, animation=fileurl)
         elif type.find("mp4") != -1:
-            bot.send_video(chat_id=chatid, video=namefile)
+            bot.send_video(chat_id=chatid, video=fileurl)
         elif type.find("mp3") != -1:
-            bot.send_audio(chat_id=chatid, audio=namefile)
+            bot.send_audio(chat_id=chatid, audio=fileurl)
 
 
 bot.polling()
