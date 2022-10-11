@@ -6,11 +6,9 @@ import speech_recognition as sr
 import json
 from pyffmpeg import FFmpeg
 from telebot import types
-
 import translate
 from transformers import RobertaTokenizerFast, TFRobertaForSequenceClassification, pipeline
 import requests
-# import endpoint
 import yadisk
 
 params = []
@@ -23,7 +21,6 @@ tokenizer = RobertaTokenizerFast.from_pretrained('arpanghoshal/EmoRoBERTa')
 model = TFRobertaForSequenceClassification.from_pretrained('arpanghoshal/EmoRoBERTa')
 y = yadisk.YaDisk(token="y0_AgAAAAAEnjtHAAh2ZQAAAADQQpFVwaI_1VTaSxKYF4jqPsFnYcvzgHA")
 all_files_on_disk = list(y.listdir("/cdn"))
-# homeDirectory = "cdn/"
 emotion = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
 
 
@@ -42,6 +39,7 @@ def recognise(filename):
 
 @bot.message_handler(content_types=['voice'])
 def voice_processing(message):
+    chatid = message.chat.id
     filename = str(uuid.uuid4())
     file_name_full = './voice/' + filename + '.ogg'
     file_name_full_converted = './ready/' + filename + '.wav'
@@ -49,7 +47,6 @@ def voice_processing(message):
     downloaded_file = bot.download_file(file_info.file_path)
     with open(file_name_full, 'wb') as new_file:
         new_file.write(downloaded_file)
-    # os.system('ffmpeg -i '+file_name_full+'  '+file_name_full_converted)
     inp = file_name_full
     out = file_name_full_converted
     ff = FFmpeg()
@@ -59,30 +56,35 @@ def voice_processing(message):
     print(original_emotion)
     bot.reply_to(message, original_emotion)
     new_message = original_emotion[:]
-    if new_message == 'admiration' or new_message == 'amusement' or new_message == 'admiration' or new_message == 'approval' or new_message == 'caring' or new_message == 'desire' or new_message == 'excitement' or new_message == 'gratitude' or new_message == 'joy' or new_message == 'love' or new_message == 'optimism' or new_message == 'pride' or new_message == 'relief':
+    if new_message == 'admiration' or new_message == 'amusement' or new_message == 'admiration' or \
+            new_message == 'approval' or new_message == 'caring' or new_message == 'desire' or \
+            new_message == 'excitement' or new_message == 'gratitude' or new_message == 'joy' or \
+            new_message == 'love' or new_message == 'optimism' or new_message == 'pride' or new_message == 'relief':
         new_message = 'positive'
-    if new_message == 'anger' or new_message == 'annoyance' or new_message == 'disappointment' or new_message == 'disapproval' or new_message == 'disgust' or new_message == 'embarrassment' or new_message == 'fear' or new_message == 'grief' or new_message == 'nervousness' or new_message == 'remorse' or new_message == 'sadness':
+    if new_message == 'anger' or new_message == 'annoyance' or new_message == 'disappointment' or \
+            new_message == 'disapproval' or new_message == 'disgust' or new_message == 'embarrassment' or \
+            new_message == 'fear' or new_message == 'grief' or new_message == 'nervousness' or new_message == 'remorse'\
+            or new_message == 'sadness':
         new_message = 'negative'
-    if new_message == 'confusion' or new_message == 'curiosity' or new_message == 'realization' or new_message == 'surprise' or new_message == 'neutral':
+    if new_message == 'confusion' or new_message == 'curiosity' or new_message == 'realization' or \
+            new_message == 'surprise' or new_message == 'neutral':
         new_message = 'neutral'
     print(new_message)
-    body = json.dumps({'paramOne': new_message, 'paramTwo': '0, 1, 2, 3, 4'})
+    
+    body = json.dumps({'paramOne': new_message, 'paramTwo': params_str})
     headers = {'content-type': 'application/json'}
-    responce = requests.post('http://localhost:8080/api/getReaction', data=body, headers=headers)
-    # print(responce.request.body)
-    # responce = requests.get('http://localhost:8080/tags/all')
+    responce = requests.post('http://localhost:6868/api/getReaction', data=body, headers=headers)
     print(responce.text)
-
-    # bot.reply_to(message, new_message)
-    fileRoute = responce.text[:]
-    paramsJson = fileRoute.split(':')
+    
+    file_route = responce.text[:]
+    params_json = file_route.split(':')
     namefile = ""
-    if paramsJson[1].find("poety") != -1 or paramsJson[1].find("quote") != -1:
-        namefile = str(paramsJson[2:])[2:-3]
+    if params_json[1].find("poety") != -1 or params_json[1].find("quote") != -1:
+        namefile = str(params_json[2:])[2:-3]
         namefile = namefile.replace('\\n', '\n')
         namefile = namefile.replace("\\", '')
     else:
-        namefile = fileRoute.split(',')[1].split(':')[1][1:-2]
+        namefile = file_route.split(',')[1].split(':')[1][1:-2]
 
     type = responce.text
     if type.find("poety") != -1:
@@ -90,15 +92,22 @@ def voice_processing(message):
     elif type.find("quote") != -1:
         bot.reply_to(message, namefile)
     else:
-        # namefile = endpoint.getPicture(namefile)
-        namefile = url + namefile
-        print(namefile)
-        bot.reply_to(message, namefile)
-    # bot.reply_to(message, new_message)
-    # bot.reply_to(message, namefile)
-    # bot.reply_to(message, new_message)
-    # os.remove(file_name_full)
-    # os.remove(file_name_full_converted)
+        fileurl = ''
+        for i in range(len(all_files_on_disk)):
+            if all_files_on_disk[i].FIELDS['name'] == namefile:
+                fileurl = all_files_on_disk[i].FIELDS['file']
+                break
+
+        if type.find("picture") != -1:
+            bot.send_photo(chat_id=chatid, photo=fileurl)
+        elif type.find("gif") != -1:
+            bot.send_animation(chat_id=chatid, animation=fileurl)
+        elif type.find("mp4") != -1:
+            bot.send_video(chat_id=chatid, video=fileurl)
+        elif type.find("mp3") != -1:
+            bot.send_audio(chat_id=chatid, audio=fileurl)
+    os.remove(file_name_full)
+    os.remove(file_name_full_converted)
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -201,20 +210,18 @@ def text_processing(message):
     print(new_message)
     body = json.dumps({'paramOne': new_message, 'paramTwo': params_str})
     headers = {'content-type': 'application/json'}
-    responce = requests.post('http://localhost:8003/api/getReaction', data=body, headers=headers)
-    # print(responce.request.body)
-    # responce = requests.get('http://localhost:8080/tags/all')
+    responce = requests.post('http://localhost:6868/api/getReaction', data=body, headers=headers)
     print(responce.text)
-    # bot.reply_to(message, new_message)
-    fileRoute = responce.text[:]
-    paramsJson = fileRoute.split(':')
+    
+    file_route = responce.text[:]
+    params_json = file_route.split(':')
     namefile = ""
-    if paramsJson[1].find("poety") != -1 or paramsJson[1].find("quote") != -1:
-        namefile = str(paramsJson[2:])[2:-3]
+    if params_json[1].find("poety") != -1 or params_json[1].find("quote") != -1:
+        namefile = str(params_json[2:])[2:-3]
         namefile = namefile.replace('\\n', '\n')
         namefile = namefile.replace("\\", '')
     else:
-        namefile = fileRoute.split(',')[1].split(':')[1][1:-2]
+        namefile = file_route.split(',')[1].split(':')[1][1:-2]
 
     type = responce.text
     if type.find("poety") != -1:
@@ -222,9 +229,6 @@ def text_processing(message):
     elif type.find("quote") != -1:
         bot.reply_to(message, namefile)
     else:
-        # namefile = type.text
-        # namefile = endpoint.getPicture(namefile)
-        names_and_links = ()
         fileurl = ''
         for i in range(len(all_files_on_disk)):
             if all_files_on_disk[i].FIELDS['name'] == namefile:
