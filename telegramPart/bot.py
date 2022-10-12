@@ -55,7 +55,7 @@ def voice_processing(message):
     downloaded_file = bot.download_file(file_info.file_path)
     with open(file_name_full, 'wb') as new_file:
         new_file.write(downloaded_file)
-    inp = file_name_full
+        inp = file_name_full
         out = file_name_full_converted
         ff = FFmpeg()
         ff.convert(inp, out)
