@@ -61,7 +61,7 @@ def voice_processing(message):
     ff.convert(inp, out)
     text = recognise(out)
 
-    original_emotion, translated_text = translate.transl(text, emotion)
+    original_emotion, translated_text = transl(text, emotion)
     bot.reply_to(message, text=text+'. Перевод: '+translated_text)
     # bot.reply_to(message, text=translated_text)
     print(original_emotion)
