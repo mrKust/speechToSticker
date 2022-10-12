@@ -36,7 +36,7 @@ packaging==21.3
 protobuf==3.19.6
 pyasn1-modules==0.2.8
 pyasn1==0.4.8
-pyffmpeg==2.4
+pyffmpeg==2.3.0.3
 pyparsing==3.0.9
 pyTelegramBotAPI==4.7.0
 PyYAML==6.0
