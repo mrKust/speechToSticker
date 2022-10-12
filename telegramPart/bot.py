@@ -49,19 +49,19 @@ def recognise(filename):
 def voice_processing(message):
     chatid = message.chat.id
     filename = str(uuid.uuid4())
-    file_name_full = './' + filename + '.ogg'
-    file_name_full_converted = './' + filename + '.wav'
+    file_name_full = './voice/' + filename + '.ogg'
+    file_name_full_converted = './ready/' + filename + '.wav'
     file_info = bot.get_file(message.voice.file_id)
     downloaded_file = bot.download_file(file_info.file_path)
     with open(file_name_full, 'wb') as new_file:
         new_file.write(downloaded_file)
-        inp = file_name_full
-        out = file_name_full_converted
-        ff = FFmpeg()
-        ff.convert(inp, out)
-        text = recognise(out)
+    inp = file_name_full
+    out = file_name_full_converted
+    ff = FFmpeg()
+    ff.convert(inp, out)
+    text = recognise(out)
 
-    original_emotion, translated_text = transl(text, emotion)
+    original_emotion, translated_text = translate.transl(text, emotion)
     bot.reply_to(message, text=text+'. Перевод: '+translated_text)
     # bot.reply_to(message, text=translated_text)
     print(original_emotion)
@@ -81,12 +81,12 @@ def voice_processing(message):
             new_message == 'surprise' or new_message == 'neutral':
         new_message = 'neutral'
     print(new_message)
-    
+
     body = json.dumps({'paramOne': new_message, 'paramTwo': params_str})
     headers = {'content-type': 'application/json'}
     responce = requests.post('http://app:8080/api/getReaction', data=body, headers=headers)
     print(responce.text)
-    
+
     file_route = responce.text[:]
     params_json = file_route.split(':')
     namefile = ""
@@ -117,7 +117,6 @@ def voice_processing(message):
             bot.send_video(chat_id=chatid, video=fileurl)
         elif type.find("mp3") != -1:
             bot.send_audio(chat_id=chatid, audio=fileurl)
-
     os.remove(file_name_full)
     os.remove(file_name_full_converted)
 
