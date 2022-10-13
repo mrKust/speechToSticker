@@ -97,34 +97,36 @@ def voice_processing(message):
             namefile = namefile.replace("\\", '')
         else:
             namefile = file_route.split(',')[1].split(':')[1][1:-2]
-
-        type = responce.text
-        if type.find("poety") != -1:
-            bot.reply_to(message, namefile)
-        elif type.find("quote") != -1:
-            bot.reply_to(message, namefile)
-        else:
-            fileurl = ''
-            for i in range(len(all_files_on_disk)):
-                if all_files_on_disk[i].FIELDS['name'] == namefile:
-                    fileurl = all_files_on_disk[i].FIELDS['file']
-                    break
-
-            if type.find("picture") != -1:
-                bot.send_photo(chat_id=chatid, photo=fileurl)
-            elif type.find("gif") != -1:
-                bot.send_animation(chat_id=chatid, animation=fileurl)
-            elif type.find("mp4") != -1:
-                bot.send_video(chat_id=chatid, video=fileurl)
-            elif type.find("mp3") != -1:
-                bot.send_audio(chat_id=chatid, audio=fileurl)
-    except:
+   except:
         print("Something go wrong in block of answers for voice message")
         traceback.print_exc()
         bot.reply_to(message, "Что-то внутри меня сломалось. Так что прости, в этот раз без ответа\nНадеюсь я не ушёл в ребут")
-    finally:
+        return
+
+   type = responce.text
+   if type.find("poety") != -1:
+        bot.reply_to(message, namefile)
+   elif type.find("quote") != -1:
+        bot.reply_to(message, namefile)
+   else:
+        fileurl = ''
+        for i in range(len(all_files_on_disk)):
+            if all_files_on_disk[i].FIELDS['name'] == namefile:
+                fileurl = all_files_on_disk[i].FIELDS['file']
+                break
+
+        if type.find("picture") != -1:
+            bot.send_photo(chat_id=chatid, photo=fileurl)
+        elif type.find("gif") != -1:
+            bot.send_animation(chat_id=chatid, animation=fileurl)
+        elif type.find("mp4") != -1:
+            bot.send_video(chat_id=chatid, video=fileurl)
+        elif type.find("mp3") != -1:
+            bot.send_audio(chat_id=chatid, audio=fileurl)
+   finally:
         os.remove(file_name_full)
         os.remove(file_name_full_converted)
+        bot.reply_to(message, "Задушил ты меня. \n Я в ребут, так что давай до следующего раза(если это второй error message значит не в ребут)")
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -241,31 +243,35 @@ def text_processing(message):
             namefile = namefile.replace("\\", '')
         else:
             namefile = file_route.split(',')[1].split(':')[1][1:-2]
-
-        type = responce.text
-        if type.find("poety") != -1:
-            bot.reply_to(message, namefile)
-        elif type.find("quote") != -1:
-            bot.reply_to(message, namefile)
-        else:
-            fileurl = ''
-            for i in range(len(all_files_on_disk)):
-                if all_files_on_disk[i].FIELDS['name'] == namefile:
-                    fileurl = all_files_on_disk[i].FIELDS['file']
-                    break
-
-            if type.find("picture") != -1:
-                bot.send_photo(chat_id=chatid, photo=fileurl)
-            elif type.find("gif") != -1:
-                bot.send_animation(chat_id=chatid, animation=fileurl)
-            elif type.find("mp4") != -1:
-                bot.send_video(chat_id=chatid, video=fileurl)
-            elif type.find("mp3") != -1:
-                bot.send_audio(chat_id=chatid, audio=fileurl)
     except:
-        print("Something go wrong in block of answers for text message")
-        traceback.print_exc()
-        bot.reply_to(message, "Что-то внутри меня сломалось. Так что прости, в этот раз без ответа\nНадеюсь я не ушёл в ребут")
+            print("Something go wrong in block of answers for text message")
+            traceback.print_exc()
+            bot.reply_to(message, "Что-то внутри меня сломалось. Так что прости, в этот раз без ответа\nНадеюсь я не ушёл в ребут")
+            return
+
+    type = responce.text
+    if type.find("poety") != -1:
+        bot.reply_to(message, namefile)
+    elif type.find("quote") != -1:
+        bot.reply_to(message, namefile)
+    else:
+        fileurl = ''
+        for i in range(len(all_files_on_disk)):
+            if all_files_on_disk[i].FIELDS['name'] == namefile:
+                fileurl = all_files_on_disk[i].FIELDS['file']
+                break
+
+        if type.find("picture") != -1:
+            bot.send_photo(chat_id=chatid, photo=fileurl)
+        elif type.find("gif") != -1:
+            bot.send_animation(chat_id=chatid, animation=fileurl)
+        elif type.find("mp4") != -1:
+            bot.send_video(chat_id=chatid, video=fileurl)
+        elif type.find("mp3") != -1:
+            bot.send_audio(chat_id=chatid, audio=fileurl)
+
+    finally:
+        bot.reply_to(message, "Задушил ты меня. \n Я в ребут, так что давай до следующего раза\n(если это второй error message значит не в ребут)")
 
 
 
