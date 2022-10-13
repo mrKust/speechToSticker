@@ -47,19 +47,20 @@ def recognise(filename):
 
 @bot.message_handler(content_types=['voice'])
 def voice_processing(message):
+    print("Current working directory: {0}".format(os.getcwd()))
     chatid = message.chat.id
     filename = str(uuid.uuid4())
-    file_name_full = './voice/' + filename + '.ogg'
-    file_name_full_converted = './ready/' + filename + '.wav'
+    file_name_full = './opt/voice/' + filename + '.ogg'
+    file_name_full_converted = 'opt/ready/' + filename + '.wav'
+    file_name_full_converted_for_create = './' + file_name_full_converted
     file_info = bot.get_file(message.voice.file_id)
     downloaded_file = bot.download_file(file_info.file_path)
     with open(file_name_full, 'wb') as new_file:
         new_file.write(downloaded_file)
-    inp = file_name_full
-    out = file_name_full_converted
+    with open(file_name_full_converted_for_create, 'w') as document: pass
     ff = FFmpeg()
-    ff.convert(inp, out)
-    text = recognise(out)
+    ff.convert(file_name_full, file_name_full_converted)
+    text = recognise(file_name_full_converted)
 
     original_emotion, translated_text = transl(text, emotion)
     bot.reply_to(message, text=text+'. Перевод: '+translated_text)
