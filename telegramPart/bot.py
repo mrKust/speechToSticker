@@ -1,4 +1,5 @@
 import telebot
+import traceback
 import uuid
 import os
 import speech_recognition as sr
@@ -26,7 +27,7 @@ emotion = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
 def transl(original_text, emotion):
     translator = Translator()
     translation = translator.translate(text=original_text, dest='en', src='ru')
-    print(translation.text)
+#     print(translation.text)
 
     emotion_labels = emotion(translation.text)
     print(emotion_labels)
@@ -38,7 +39,7 @@ def recognise(filename):
         try:
             text = r.recognize_google(audio_text, language=language)
             print('Converting audio transcripts into text ...')
-            print(text)
+#             print(text)
             return text
         except:
             print('Sorry.. run again...')
@@ -47,7 +48,6 @@ def recognise(filename):
 
 @bot.message_handler(content_types=['voice'])
 def voice_processing(message):
-    print("Current working directory: {0}".format(os.getcwd()))
     chatid = message.chat.id
     filename = str(uuid.uuid4())
     file_name_full = './opt/voice/' + filename + '.ogg'
@@ -58,68 +58,73 @@ def voice_processing(message):
     with open(file_name_full, 'wb') as new_file:
         new_file.write(downloaded_file)
     with open(file_name_full_converted_for_create, 'w') as document: pass
-    ff = FFmpeg()
-    ff.convert(file_name_full, file_name_full_converted)
-    text = recognise(file_name_full_converted)
+    try:
+        ff = FFmpeg()
+        ff.convert(file_name_full, file_name_full_converted)
+        text = recognise(file_name_full_converted)
 
-    original_emotion, translated_text = transl(text, emotion)
-    bot.reply_to(message, text=text+'. Перевод: '+translated_text)
-    # bot.reply_to(message, text=translated_text)
-    print(original_emotion)
-    bot.reply_to(message, original_emotion)
-    new_message = original_emotion[:]
-    if new_message == 'admiration' or new_message == 'amusement' or new_message == 'admiration' or \
-            new_message == 'approval' or new_message == 'caring' or new_message == 'desire' or \
-            new_message == 'excitement' or new_message == 'gratitude' or new_message == 'joy' or \
-            new_message == 'love' or new_message == 'optimism' or new_message == 'pride' or new_message == 'relief':
-        new_message = 'positive'
-    if new_message == 'anger' or new_message == 'annoyance' or new_message == 'disappointment' or \
-            new_message == 'disapproval' or new_message == 'disgust' or new_message == 'embarrassment' or \
-            new_message == 'fear' or new_message == 'grief' or new_message == 'nervousness' or new_message == 'remorse'\
-            or new_message == 'sadness':
-        new_message = 'negative'
-    if new_message == 'confusion' or new_message == 'curiosity' or new_message == 'realization' or \
-            new_message == 'surprise' or new_message == 'neutral':
-        new_message = 'neutral'
-    print(new_message)
+        original_emotion, translated_text = transl(text, emotion)
+        bot.reply_to(message, text=text+'. Перевод: '+translated_text)
+#         print(original_emotion)
+        bot.reply_to(message, original_emotion)
+        new_message = original_emotion[:]
+        if new_message == 'admiration' or new_message == 'amusement' or new_message == 'admiration' or \
+                new_message == 'approval' or new_message == 'caring' or new_message == 'desire' or \
+                new_message == 'excitement' or new_message == 'gratitude' or new_message == 'joy' or \
+                new_message == 'love' or new_message == 'optimism' or new_message == 'pride' or new_message == 'relief':
+            new_message = 'positive'
+        if new_message == 'anger' or new_message == 'annoyance' or new_message == 'disappointment' or \
+                new_message == 'disapproval' or new_message == 'disgust' or new_message == 'embarrassment' or \
+                new_message == 'fear' or new_message == 'grief' or new_message == 'nervousness' or new_message == 'remorse'\
+                or new_message == 'sadness':
+            new_message = 'negative'
+        if new_message == 'confusion' or new_message == 'curiosity' or new_message == 'realization' or \
+                new_message == 'surprise' or new_message == 'neutral':
+            new_message = 'neutral'
+#         print(new_message)
 
-    body = json.dumps({'paramOne': new_message, 'paramTwo': params_str})
-    headers = {'content-type': 'application/json'}
-    responce = requests.post('http://app:8080/api/getReaction', data=body, headers=headers)
-    print(responce.text)
+        body = json.dumps({'paramOne': new_message, 'paramTwo': params_str})
+        headers = {'content-type': 'application/json'}
+        responce = requests.post('http://app:8080/api/getReaction', data=body, headers=headers)
+        print(responce.text)
 
-    file_route = responce.text[:]
-    params_json = file_route.split(':')
-    namefile = ""
-    if params_json[1].find("poety") != -1 or params_json[1].find("quote") != -1:
-        namefile = str(params_json[2:])[2:-3]
-        namefile = namefile.replace('\\n', '\n')
-        namefile = namefile.replace("\\", '')
-    else:
-        namefile = file_route.split(',')[1].split(':')[1][1:-2]
+        file_route = responce.text[:]
+        params_json = file_route.split(':')
+        namefile = ""
+        if params_json[1].find("poety") != -1 or params_json[1].find("quote") != -1:
+            namefile = str(params_json[2:])[2:-3]
+            namefile = namefile.replace('\\n', '\n')
+            namefile = namefile.replace("\\", '')
+        else:
+            namefile = file_route.split(',')[1].split(':')[1][1:-2]
 
-    type = responce.text
-    if type.find("poety") != -1:
-        bot.reply_to(message, namefile)
-    elif type.find("quote") != -1:
-        bot.reply_to(message, namefile)
-    else:
-        fileurl = ''
-        for i in range(len(all_files_on_disk)):
-            if all_files_on_disk[i].FIELDS['name'] == namefile:
-                fileurl = all_files_on_disk[i].FIELDS['file']
-                break
+        type = responce.text
+        if type.find("poety") != -1:
+            bot.reply_to(message, namefile)
+        elif type.find("quote") != -1:
+            bot.reply_to(message, namefile)
+        else:
+            fileurl = ''
+            for i in range(len(all_files_on_disk)):
+                if all_files_on_disk[i].FIELDS['name'] == namefile:
+                    fileurl = all_files_on_disk[i].FIELDS['file']
+                    break
 
-        if type.find("picture") != -1:
-            bot.send_photo(chat_id=chatid, photo=fileurl)
-        elif type.find("gif") != -1:
-            bot.send_animation(chat_id=chatid, animation=fileurl)
-        elif type.find("mp4") != -1:
-            bot.send_video(chat_id=chatid, video=fileurl)
-        elif type.find("mp3") != -1:
-            bot.send_audio(chat_id=chatid, audio=fileurl)
-    os.remove(file_name_full)
-    os.remove(file_name_full_converted)
+            if type.find("picture") != -1:
+                bot.send_photo(chat_id=chatid, photo=fileurl)
+            elif type.find("gif") != -1:
+                bot.send_animation(chat_id=chatid, animation=fileurl)
+            elif type.find("mp4") != -1:
+                bot.send_video(chat_id=chatid, video=fileurl)
+            elif type.find("mp3") != -1:
+                bot.send_audio(chat_id=chatid, audio=fileurl)
+    except:
+        print("Something go wrong in block of answers for voice message")
+        traceback.print_exc()
+        bot.reply_to(message, "Что-то внутри меня сломалось. Так что прости, в этот раз без ответа\nНадеюсь я не ушёл в ребут")
+    finally:
+        os.remove(file_name_full)
+        os.remove(file_name_full_converted)
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -209,53 +214,59 @@ def text_processing(message):
     # message_from_user = json.dumps({'Text': message.text}, indent=4, ensure_ascii=False).encode('UTF8')
     global params_str
     chatid = message.chat.id
-    print(chatid)
-    print(message.text)
-    tr = ''
-    new_message, tr = transl(message.text, emotion)
-    bot.reply_to(message, new_message)
-    if new_message == 'admiration' or new_message == 'amusement' or new_message == 'admiration' or new_message == 'approval' or new_message == 'caring' or new_message == 'desire' or new_message == 'excitement' or new_message == 'gratitude' or new_message == 'joy' or new_message == 'love' or new_message == 'optimism' or new_message == 'pride' or new_message == 'relief':
-        new_message = 'positive'
-    if new_message == 'anger' or new_message == 'annoyance' or new_message == 'disappointment' or new_message == 'disapproval' or new_message == 'disgust' or new_message == 'embarrassment' or new_message == 'fear' or new_message == 'grief' or new_message == 'nervousness' or new_message == 'remorse' or new_message == 'sadness':
-        new_message = 'negative'
-    if new_message == 'confusion' or new_message == 'curiosity' or new_message == 'realization' or new_message == 'surprise' or new_message == 'neutral':
-        new_message = 'neutral'
-    print(new_message)
-    body = json.dumps({'paramOne': new_message, 'paramTwo': params_str})
-    headers = {'content-type': 'application/json'}
-    responce = requests.post('http://app:8080/api/getReaction', data=body, headers=headers)
-    print(responce.text)
-    
-    file_route = responce.text[:]
-    params_json = file_route.split(':')
-    namefile = ""
-    if params_json[1].find("poety") != -1 or params_json[1].find("quote") != -1:
-        namefile = str(params_json[2:])[2:-3]
-        namefile = namefile.replace('\\n', '\n')
-        namefile = namefile.replace("\\", '')
-    else:
-        namefile = file_route.split(',')[1].split(':')[1][1:-2]
+#     print(chatid)
+#     print(message.text)
+    try:
+        tr = ''
+        new_message, tr = transl(message.text, emotion)
+        bot.reply_to(message, new_message)
+        if new_message == 'admiration' or new_message == 'amusement' or new_message == 'admiration' or new_message == 'approval' or new_message == 'caring' or new_message == 'desire' or new_message == 'excitement' or new_message == 'gratitude' or new_message == 'joy' or new_message == 'love' or new_message == 'optimism' or new_message == 'pride' or new_message == 'relief':
+            new_message = 'positive'
+        if new_message == 'anger' or new_message == 'annoyance' or new_message == 'disappointment' or new_message == 'disapproval' or new_message == 'disgust' or new_message == 'embarrassment' or new_message == 'fear' or new_message == 'grief' or new_message == 'nervousness' or new_message == 'remorse' or new_message == 'sadness':
+            new_message = 'negative'
+        if new_message == 'confusion' or new_message == 'curiosity' or new_message == 'realization' or new_message == 'surprise' or new_message == 'neutral':
+            new_message = 'neutral'
+        print(new_message)
+        body = json.dumps({'paramOne': new_message, 'paramTwo': params_str})
+        headers = {'content-type': 'application/json'}
+        responce = requests.post('http://app:8080/api/getReaction', data=body, headers=headers)
+        print(responce.text)
 
-    type = responce.text
-    if type.find("poety") != -1:
-        bot.reply_to(message, namefile)
-    elif type.find("quote") != -1:
-        bot.reply_to(message, namefile)
-    else:
-        fileurl = ''
-        for i in range(len(all_files_on_disk)):
-            if all_files_on_disk[i].FIELDS['name'] == namefile:
-                fileurl = all_files_on_disk[i].FIELDS['file']
-                break
+        file_route = responce.text[:]
+        params_json = file_route.split(':')
+        namefile = ""
+        if params_json[1].find("poety") != -1 or params_json[1].find("quote") != -1:
+            namefile = str(params_json[2:])[2:-3]
+            namefile = namefile.replace('\\n', '\n')
+            namefile = namefile.replace("\\", '')
+        else:
+            namefile = file_route.split(',')[1].split(':')[1][1:-2]
 
-        if type.find("picture") != -1:
-            bot.send_photo(chat_id=chatid, photo=fileurl)
-        elif type.find("gif") != -1:
-            bot.send_animation(chat_id=chatid, animation=fileurl)
-        elif type.find("mp4") != -1:
-            bot.send_video(chat_id=chatid, video=fileurl)
-        elif type.find("mp3") != -1:
-            bot.send_audio(chat_id=chatid, audio=fileurl)
+        type = responce.text
+        if type.find("poety") != -1:
+            bot.reply_to(message, namefile)
+        elif type.find("quote") != -1:
+            bot.reply_to(message, namefile)
+        else:
+            fileurl = ''
+            for i in range(len(all_files_on_disk)):
+                if all_files_on_disk[i].FIELDS['name'] == namefile:
+                    fileurl = all_files_on_disk[i].FIELDS['file']
+                    break
+
+            if type.find("picture") != -1:
+                bot.send_photo(chat_id=chatid, photo=fileurl)
+            elif type.find("gif") != -1:
+                bot.send_animation(chat_id=chatid, animation=fileurl)
+            elif type.find("mp4") != -1:
+                bot.send_video(chat_id=chatid, video=fileurl)
+            elif type.find("mp3") != -1:
+                bot.send_audio(chat_id=chatid, audio=fileurl)
+    except:
+        print("Something go wrong in block of answers for text message")
+        traceback.print_exc()
+        bot.reply_to(message, "Что-то внутри меня сломалось. Так что прости, в этот раз без ответа\nНадеюсь я не ушёл в ребут")
+
 
 
 bot.polling()
