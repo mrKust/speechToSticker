@@ -73,7 +73,7 @@ public class MainServiceImpl implements MainService {
                 Poety poety = poetyService.getPoety(idElems[resultId]);
                 if (poety != null){
                     answer.setParamOne("poety");
-                    answer.setParamTwo(poety.getText()+"/n"+poety.getAuthor());
+                    answer.setParamTwo(poety.getText()+"\n"+poety.getAuthor());
                 }
                 break;
             case 3:
@@ -84,7 +84,7 @@ public class MainServiceImpl implements MainService {
                 Quote quote = quoteService.getQuote(idElems[resultId]);
                 if (quote != null){
                     answer.setParamOne("quote");
-                    answer.setParamTwo(quote.getText()+"/n"+quote.getAuthor());
+                    answer.setParamTwo(quote.getText()+"\n"+quote.getAuthor());
                 }
                 break;
             case 4:
