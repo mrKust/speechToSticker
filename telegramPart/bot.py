@@ -87,24 +87,23 @@ def voice_processing(message):
         headers = {'content-type': 'application/json'}
         responce = requests.post('http://app:8080/api/getReaction', data=body, headers=headers)
         print(responce.text)
-
-        file_route = responce.text[:]
-        params_json = file_route.split(':')
-        namefile = ""
-        if params_json[1].find("poety") != -1 or params_json[1].find("quote") != -1:
-            namefile = str(params_json[2:])[2:-3]
-            namefile = namefile.replace('\\n', '\n')
-            namefile = namefile.replace("\\", '')
-        else:
-            namefile = file_route.split(',')[1].split(':')[1][1:-2]
     except:
-        print("Something go wrong in block of answers for text message")
+        print("Something go wrong in block of answers for voice message")
         traceback.print_exc()
-        bot.reply_to(message, "Что-то внутри меня сломалось. Так что прости, в этот раз без ответа\nНадеюсь я не ушёл в ребут")
-        return
+        bot.reply_to(message, "Что-то внутри меня сломалось. Так что прости, в этот раз без ответа\nНадо логи чекать")
     finally:
         os.remove(file_name_full)
         os.remove(file_name_full_converted)
+
+    file_route = responce.text[:]
+    params_json = file_route.split(':')
+    namefile = ""
+    if params_json[1].find("poety") != -1 or params_json[1].find("quote") != -1:
+        namefile = str(params_json[2:])[2:-3]
+        namefile = namefile.replace('\\n', '\n')
+        namefile = namefile.replace("\\", '')
+    else:
+        namefile = file_route.split(',')[1].split(':')[1][1:-2]
 
     type = responce.text
     if type.find("poety") != -1:
@@ -244,8 +243,8 @@ def text_processing(message):
     except:
         print("Something go wrong in block of answers for text message")
         traceback.print_exc()
-        bot.reply_to(message, "Что-то внутри меня сломалось. Так что прости, в этот раз без ответа\nНадеюсь я не ушёл в ребут")
-        return
+        bot.reply_to(message, "Что-то внутри меня сломалось. Так что прости, в этот раз без ответа\nНадо смотреть логи")
+
 
     type = responce.text
     if type.find("poety") != -1:
