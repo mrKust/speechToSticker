@@ -1,3 +1,5 @@
+import sys
+
 import telebot
 import traceback
 import uuid
@@ -22,6 +24,8 @@ model = TFRobertaForSequenceClassification.from_pretrained('arpanghoshal/EmoRoBE
 y = yadisk.YaDisk(token=os.environ["YANDEX_DISK_TOKEN"])
 all_files_on_disk = list(y.listdir("/cdn"))
 emotion = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
+errorMessage = "Что-то внутри меня сломалось. Так что прости, в этот раз без ответа\nНадо логи чекать"
+rebootMessage = "Да задушил ты меня. Так что я в ребут, бывай ихтиандр"
 
 
 def transl(original_text, emotion):
@@ -90,41 +94,48 @@ def voice_processing(message):
     except:
         print("Something go wrong in block of answers for voice message")
         traceback.print_exc()
-        bot.reply_to(message, "Что-то внутри меня сломалось. Так что прости, в этот раз без ответа\nНадо логи чекать")
+        bot.reply_to(message, errorMessage)
     finally:
         os.remove(file_name_full)
         os.remove(file_name_full_converted)
 
-    file_route = responce.text[:]
-    params_json = file_route.split(':')
-    namefile = ""
-    if params_json[1].find("poety") != -1 or params_json[1].find("quote") != -1:
-        namefile = str(params_json[2:])[2:-3]
-        namefile = namefile.replace('\\n', '\n')
-        namefile = namefile.replace("\\", '')
-    else:
-        namefile = file_route.split(',')[1].split(':')[1][1:-2]
+    try:
+        file_route = responce.text[:]
+        params_json = file_route.split(':')
+        namefile = ""
+        if params_json[1].find("poety") != -1 or params_json[1].find("quote") != -1:
+            namefile = str(params_json[2:])[2:-3]
+            namefile = namefile.replace('\\n', '\n')
+            namefile = namefile.replace("\\", '')
+        else:
+            namefile = file_route.split(',')[1].split(':')[1][1:-2]
 
-    type = responce.text
-    if type.find("poety") != -1:
-        bot.reply_to(message, namefile)
-    elif type.find("quote") != -1:
-        bot.reply_to(message, namefile)
-    else:
-        fileurl = ''
-        for i in range(len(all_files_on_disk)):
-            if all_files_on_disk[i].FIELDS['name'] == namefile:
-                fileurl = all_files_on_disk[i].FIELDS['file']
-                break
+        type = responce.text
+        if type.find("poety") != -1:
+            bot.reply_to(message, namefile)
+        elif type.find("quote") != -1:
+            bot.reply_to(message, namefile)
+        else:
+            fileurl = ''
+            for i in range(len(all_files_on_disk)):
+                if all_files_on_disk[i].FIELDS['name'] == namefile:
+                    fileurl = all_files_on_disk[i].FIELDS['file']
+                    break
 
-        if type.find("picture") != -1:
-            bot.send_photo(chat_id=chatid, photo=fileurl)
-        elif type.find("gif") != -1:
-            bot.send_animation(chat_id=chatid, animation=fileurl)
-        elif type.find("mp4") != -1:
-            bot.send_video(chat_id=chatid, video=fileurl)
-        elif type.find("mp3") != -1:
-            bot.send_audio(chat_id=chatid, audio=fileurl)
+            if type.find("picture") != -1:
+                bot.send_photo(chat_id=chatid, photo=fileurl)
+            elif type.find("gif") != -1:
+                bot.send_animation(chat_id=chatid, animation=fileurl)
+            elif type.find("mp4") != -1:
+                bot.send_video(chat_id=chatid, video=fileurl)
+            elif type.find("mp3") != -1:
+                bot.send_audio(chat_id=chatid, audio=fileurl)
+    except:
+        print("Something go wrong in sending media for voice message")
+        traceback.print_exc()
+        bot.reply_to(message, rebootMessageMessage)
+        sys.exit(5)
+
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_worker(call):
@@ -243,29 +254,35 @@ def text_processing(message):
     except:
         print("Something go wrong in block of answers for text message")
         traceback.print_exc()
-        bot.reply_to(message, "Что-то внутри меня сломалось. Так что прости, в этот раз без ответа\nНадо смотреть логи")
+        bot.reply_to(message, errorMessage)
 
 
-    type = responce.text
-    if type.find("poety") != -1:
-        bot.reply_to(message, namefile)
-    elif type.find("quote") != -1:
-        bot.reply_to(message, namefile)
-    else:
-        fileurl = ''
-        for i in range(len(all_files_on_disk)):
-            if all_files_on_disk[i].FIELDS['name'] == namefile:
-                fileurl = all_files_on_disk[i].FIELDS['file']
-                break
+    try:
+        type = responce.text
+        if type.find("poety") != -1:
+            bot.reply_to(message, namefile)
+        elif type.find("quote") != -1:
+            bot.reply_to(message, namefile)
+        else:
+            fileurl = ''
+            for i in range(len(all_files_on_disk)):
+                if all_files_on_disk[i].FIELDS['name'] == namefile:
+                    fileurl = all_files_on_disk[i].FIELDS['file']
+                    break
 
-        if type.find("picture") != -1:
-            bot.send_photo(chat_id=chatid, photo=fileurl)
-        elif type.find("gif") != -1:
-            bot.send_animation(chat_id=chatid, animation=fileurl)
-        elif type.find("mp4") != -1:
-            bot.send_video(chat_id=chatid, video=fileurl)
-        elif type.find("mp3") != -1:
-            bot.send_audio(chat_id=chatid, audio=fileurl)
+            if type.find("picture") != -1:
+                bot.send_photo(chat_id=chatid, photo=fileurl)
+            elif type.find("gif") != -1:
+                bot.send_animation(chat_id=chatid, animation=fileurl)
+            elif type.find("mp4") != -1:
+                bot.send_video(chat_id=chatid, video=fileurl)
+            elif type.find("mp3") != -1:
+                bot.send_audio(chat_id=chatid, audio=fileurl)
+    except:
+        print("Something go wrong in sending media for text message")
+        traceback.print_exc()
+        bot.reply_to(message, rebootMessageMessage)
+        sys.exit(5)
 
 
 bot.polling()
