@@ -33,7 +33,7 @@ Principle of operation:
 - EmoRoBERTa
 
 ## Project components interaction
-![image](https://user-images.githubusercontent.com/79422421/194120999-21debf77-2345-4b73-859f-7631260b4ec3.png)<br> *Pic 1.Architecture.* <br>
+![изображение](https://user-images.githubusercontent.com/45081619/201858090-310d5648-d02f-4d5e-8a83-9b10748a1b00.png)<br> *Pic 1.Architecture.* <br>
 
 
 ## Application functionality demonstration
